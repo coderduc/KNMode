@@ -51,7 +51,17 @@ StructDll crossfire;
 StructDll cshell;
 StructDll ClientFx_x64;
 HWND hWnd = NULL;
-int status;
+DWORD CheckPoint;
+DWORD ReturnCheckPoint;
+DWORD SecondPerson;
+DWORD CopyRoomID;
+DWORD PasteRoomID;
+DWORD DrawCrosshair;
+DWORD OnOffBypass;
+DWORD ThirdPerson;
+DWORD SkillE;
+DWORD NoReload_NoChange;
+DWORD NoRecoil;
 
 template<typename ... A>
 uint64_t call_hook(const A ... arguments)
@@ -239,23 +249,6 @@ void NoFallDamage() {
 	write<float>(base + dwNoFallDamageOffset, 0.0f);
 }
 
-void AllBypass() {
-	//Bypass Screen Capture
-	BYTE bypassScreen[] = { 0xE9, 0x9E, 0x00, 0x00, 0x00, 0x90 };
-	changeProtection(pid, cshell.baseAddr + dwBPSendScreen, 6, PAGE_EXECUTE_READWRITE);
-	writeBytes(cshell.baseAddr + dwBPSendScreen, &bypassScreen, sizeof(bypassScreen));
-	changeProtection(pid, cshell.baseAddr + dwBPSendScreen, 6, 0);
-
-	//Bypass Detect Tool
-	BYTE BPDetectTool[] = { 0xEB };
-	changeProtection(pid, cshell.baseAddr + dwBPToolCheatDetect0, 2, PAGE_EXECUTE_READWRITE);
-	changeProtection(pid, cshell.baseAddr + dwBPToolCheatDetect1, 2, PAGE_EXECUTE_READWRITE);
-	writeBytes(cshell.baseAddr + dwBPToolCheatDetect0, &BPDetectTool, sizeof(BPDetectTool));
-	writeBytes(cshell.baseAddr + dwBPToolCheatDetect1, &BPDetectTool, sizeof(BPDetectTool));
-	changeProtection(pid, cshell.baseAddr + dwBPToolCheatDetect0, 2, 0);
-	changeProtection(pid, cshell.baseAddr + dwBPToolCheatDetect1, 2, 0);
-}
-
 void Wall_Hack() {
 	bool once_ingame = false;
 	bool once_outgame = false;
@@ -286,12 +279,6 @@ void GMChat() {
 	changeProtection(pid, cshell.baseAddr + dwGMChat, 10, 0);
 }
 
-typedef int(*pDD_btn)(int btn);
-typedef int(*pDD_movR)(int dx, int dy);
-
-pDD_btn      DD_btn;          //Mouse button
-pDD_movR   DD_movR;	     //VK to ddcode
-
 void SupportFunction() {
 	float oldx = 0, oldy = 0, oldz = 0;
 	bool isSecondPerson = false;
@@ -299,9 +286,9 @@ void SupportFunction() {
 	bool isNoRecoilOn = false;
 	bool isDrawCrosshair = false;
 	bool isAimbot = false;
+	bool isBPOn = false;
 	int roomid = 0;
 
-	HINSTANCE _hGDI = LoadLibraryA("gdi32.dll");
 	uintptr_t thirdPerson_Base = read<uintptr_t>(cshell.baseAddr + dwThirdPerson_Base);
 	uintptr_t copyRoom_base = read<uintptr_t>(cshell.baseAddr + dwCopyRoomBase);
 	uintptr_t copyRoom_base1 = read<uintptr_t>(copyRoom_base + dwCopyRoom_Offset1);
@@ -309,8 +296,107 @@ void SupportFunction() {
 	while (true) {
 		int inGameStatus = read<int>(cshell.baseAddr + dwinGameStatus);
 
+		if (GetAsyncKeyState(OnOffBypass) & 1) {
+			Beep(300, 500);
+			isBPOn = !isBPOn;
+		}
+		if (isBPOn) {
+			//Bypass Screen Capture On
+			BYTE bypassScreen_On[] = { 0xE9, 0x9E, 0x00, 0x00, 0x00, 0x90 };
+			changeProtection(pid, cshell.baseAddr + dwBPSendScreen, 6, PAGE_EXECUTE_READWRITE);
+			writeBytes(cshell.baseAddr + dwBPSendScreen, &bypassScreen_On, sizeof(bypassScreen_On));
+			changeProtection(pid, cshell.baseAddr + dwBPSendScreen, 6, 0);
+
+			//Bypass Detect Tool On
+			BYTE BPDetectTool_On[] = { 0xEB };
+			changeProtection(pid, cshell.baseAddr + dwBPToolCheatDetect0, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + dwBPToolCheatDetect1, 2, PAGE_EXECUTE_READWRITE);
+			writeBytes(cshell.baseAddr + dwBPToolCheatDetect0, &BPDetectTool_On, sizeof(BPDetectTool_On));
+			writeBytes(cshell.baseAddr + dwBPToolCheatDetect1, &BPDetectTool_On, sizeof(BPDetectTool_On));
+			changeProtection(pid, cshell.baseAddr + dwBPToolCheatDetect0, 2, 0);
+			changeProtection(pid, cshell.baseAddr + dwBPToolCheatDetect1, 2, 0);
+
+			//Bypass 31_9 On
+			BYTE BP31_9_On[] = { 0xEB };
+			changeProtection(pid, cshell.baseAddr + 0x8ECAA7, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + 0x8ECD36, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + 0x8ECF50, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + 0x8ED1F3, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + 0x8F2768, 2, PAGE_EXECUTE_READWRITE);
+			writeBytes(cshell.baseAddr + 0x8ECAA7, &BP31_9_On, sizeof(BP31_9_On));
+			writeBytes(cshell.baseAddr + 0x8ECD36, &BP31_9_On, sizeof(BP31_9_On));
+			writeBytes(cshell.baseAddr + 0x8ECF50, &BP31_9_On, sizeof(BP31_9_On));
+			writeBytes(cshell.baseAddr + 0x8ED1F3, &BP31_9_On, sizeof(BP31_9_On));
+			writeBytes(cshell.baseAddr + 0x8F2768, &BP31_9_On, sizeof(BP31_9_On));
+			changeProtection(pid, cshell.baseAddr + 0x8ECAA7, 2, 0);
+			changeProtection(pid, cshell.baseAddr + 0x8ECD36, 2, 0);
+			changeProtection(pid, cshell.baseAddr + 0x8ECF50, 2, 0);
+			changeProtection(pid, cshell.baseAddr + 0x8ED1F3, 2, 0);
+			changeProtection(pid, cshell.baseAddr + 0x8F2768, 2, 0);
+
+			//Bypass 31_10_On
+			BYTE BP31_10_On[] = { 0xEB };
+			changeProtection(pid, cshell.baseAddr + 0x13C86C0, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + 0x13C25C5, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + 0x13C2440, 2, PAGE_EXECUTE_READWRITE);
+			writeBytes(cshell.baseAddr + 0x13C86C0, &BP31_10_On, sizeof(BP31_10_On));
+			writeBytes(cshell.baseAddr + 0x13C25C5, &BP31_10_On, sizeof(BP31_10_On));
+			writeBytes(cshell.baseAddr + 0x13C2440, &BP31_10_On, sizeof(BP31_10_On));
+			changeProtection(pid, cshell.baseAddr + 0x13C86C0, 2, 0);
+			changeProtection(pid, cshell.baseAddr + 0x13C25C5, 2, 0);
+			changeProtection(pid, cshell.baseAddr + 0x13C2440, 2, 0);
+		}
+		else {
+			//Bypass Screen Capture Off
+			BYTE bypassScreen_Off[] = { 0x0F, 0x85, 0x9D, 0x00, 0x00, 0x00 };
+			changeProtection(pid, cshell.baseAddr + dwBPSendScreen, 6, PAGE_EXECUTE_READWRITE);
+			writeBytes(cshell.baseAddr + dwBPSendScreen, &bypassScreen_Off, sizeof(bypassScreen_Off));
+			changeProtection(pid, cshell.baseAddr + dwBPSendScreen, 6, 0);
+
+			//Bypass Detect Tool Off
+			BYTE BPDetectTool_Off[] = { 0x75 };
+			changeProtection(pid, cshell.baseAddr + dwBPToolCheatDetect0, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + dwBPToolCheatDetect1, 2, PAGE_EXECUTE_READWRITE);
+			writeBytes(cshell.baseAddr + dwBPToolCheatDetect0, &BPDetectTool_Off, sizeof(BPDetectTool_Off));
+			writeBytes(cshell.baseAddr + dwBPToolCheatDetect1, &BPDetectTool_Off, sizeof(BPDetectTool_Off));
+			changeProtection(pid, cshell.baseAddr + dwBPToolCheatDetect0, 2, 0);
+			changeProtection(pid, cshell.baseAddr + dwBPToolCheatDetect1, 2, 0);
+
+			//Bypass 31_9 Off
+			BYTE BP31_9_Off[] = { 0x75 };
+			changeProtection(pid, cshell.baseAddr + BP31_9_1, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + BP31_9_2, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + BP31_9_3, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + BP31_9_4, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + BP31_9_5, 2, PAGE_EXECUTE_READWRITE);
+			writeBytes(cshell.baseAddr + BP31_9_1, &BP31_9_Off, sizeof(BP31_9_Off));
+			writeBytes(cshell.baseAddr + BP31_9_2, &BP31_9_Off, sizeof(BP31_9_Off));
+			writeBytes(cshell.baseAddr + BP31_9_3, &BP31_9_Off, sizeof(BP31_9_Off));
+			writeBytes(cshell.baseAddr + BP31_9_4, &BP31_9_Off, sizeof(BP31_9_Off));
+			writeBytes(cshell.baseAddr + BP31_9_5, &BP31_9_Off, sizeof(BP31_9_Off));
+			changeProtection(pid, cshell.baseAddr + BP31_9_1, 2, 0);
+			changeProtection(pid, cshell.baseAddr + BP31_9_2, 2, 0);
+			changeProtection(pid, cshell.baseAddr + BP31_9_3, 2, 0);
+			changeProtection(pid, cshell.baseAddr + BP31_9_4, 2, 0);
+			changeProtection(pid, cshell.baseAddr + BP31_9_5, 2, 0);
+
+			//Bypass 31_10_Off
+			BYTE BP31_10_Off[] = { 0x75 };
+			changeProtection(pid, cshell.baseAddr + BP31_10_1, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + BP31_10_2, 2, PAGE_EXECUTE_READWRITE);
+			changeProtection(pid, cshell.baseAddr + BP31_10_3, 2, PAGE_EXECUTE_READWRITE);
+			writeBytes(cshell.baseAddr + BP31_10_1, &BP31_10_Off, sizeof(BP31_10_Off));
+			writeBytes(cshell.baseAddr + BP31_10_2, &BP31_10_Off, sizeof(BP31_10_Off));
+			writeBytes(cshell.baseAddr + BP31_10_3, &BP31_10_Off, sizeof(BP31_10_Off));
+			changeProtection(pid, cshell.baseAddr + BP31_10_1, 2, 0);
+			changeProtection(pid, cshell.baseAddr + BP31_10_2, 2, 0);
+			changeProtection(pid, cshell.baseAddr + BP31_10_3, 2, 0);
+		}
+			
+	
+
 		//Skill E
-		if (GetAsyncKeyState(VK_SHIFT) & 1) {
+		if (GetAsyncKeyState(SkillE) & 1) {
 			if (inGameStatus == 0xB) {
 				uintptr_t skillE_Base = read<uintptr_t>(cshell.baseAddr + dwSkillE_Base);
 				int skillE_read = read<int>(skillE_Base + dwSkillE_Offset);
@@ -321,7 +407,7 @@ void SupportFunction() {
 		}
 
 		//Checkpoint
-		if (GetAsyncKeyState(VK_NUMPAD1) & 1) {
+		if (GetAsyncKeyState(CheckPoint) & 1) {
 			if (inGameStatus == 0xB) {
 				Beep(500, 300);
 				uintptr_t coordinate_base = read<uintptr_t>(cshell.baseAddr + dwCoordinate_Base);
@@ -332,7 +418,7 @@ void SupportFunction() {
 			}
 		}
 		//Go to the last checkpoint
-		if (GetAsyncKeyState(VK_NUMPAD2) & 1) {
+		if (GetAsyncKeyState(ReturnCheckPoint) & 1) {
 			if (inGameStatus == 0xB) {
 				Beep(300, 300);
 				uintptr_t coordinate_base = read<uintptr_t>(cshell.baseAddr + dwCoordinate_Base);
@@ -344,7 +430,7 @@ void SupportFunction() {
 		}
 
 		//Third person
-		if (GetAsyncKeyState('V') & 1) {
+		if (GetAsyncKeyState(ThirdPerson) & 1) {
 			isSecondPerson = !isSecondPerson;
 			if (isSecondPerson) {
 				write<int>(thirdPerson_Base + dwThirdPerson_Offset, 3);
@@ -355,7 +441,7 @@ void SupportFunction() {
 		}
 
 		//Second person
-		if (GetAsyncKeyState(VK_NUMPAD3) & 1) {
+		if (GetAsyncKeyState(SecondPerson) & 1) {
 			isSecondPerson = !isSecondPerson;
 			if (isSecondPerson) {
 				write<int>(thirdPerson_Base + dwThirdPerson_Offset, 2);
@@ -366,12 +452,12 @@ void SupportFunction() {
 		}
 
 		//Copy room ID
-		if (GetAsyncKeyState(VK_NUMPAD4) & 1) {
+		if (GetAsyncKeyState(CopyRoomID) & 1) {
 			Beep(500, 300);
 			roomid = read<int>(copyRoom_base1 + dwCopyRoom_Offset2);
 		}
 
-		if (GetAsyncKeyState(VK_NUMPAD5) & 1) {
+		if (GetAsyncKeyState(PasteRoomID) & 1) {
 			Beep(300, 300);
 			if (roomid != 0) {
 				write<int>(copyRoom_base1 + dwCopyRoom_Offset2, roomid);
@@ -379,7 +465,7 @@ void SupportFunction() {
 		}
 		
 		//No Change and No Reload
-		if (GetAsyncKeyState(VK_F2) & 1) {
+		if (GetAsyncKeyState(NoReload_NoChange) & 1) {
 			Beep(300, 500);
 			isNC_NR = !isNC_NR;
 		}
@@ -389,7 +475,7 @@ void SupportFunction() {
 		}
 
 		//No Recoil
-		if (GetAsyncKeyState(VK_F3) & 1) {
+		if (GetAsyncKeyState(NoRecoil) & 1) {
 			Beep(300, 500);
 			isNoRecoilOn = !isNoRecoilOn;
 		}
@@ -417,7 +503,7 @@ void SupportFunction() {
 			changeProtection(pid, cshell.baseAddr + dwNoRecoil, 0x1, PAGE_EXECUTE_READWRITE);
 		}
 		
-		if (GetAsyncKeyState(VK_NUMPAD6) & 1) {
+		if (GetAsyncKeyState(DrawCrosshair) & 1) {
 			Beep(300, 500);
 			isDrawCrosshair = !isDrawCrosshair;
 		}
@@ -433,9 +519,9 @@ void SupportFunction() {
 		}
 
 		NoBugDamage();
+
 	}
 }
-
 
 int main(void) {
 	setup();
@@ -454,13 +540,17 @@ int main(void) {
  \______  /\____   |   \______  /____/__||__|  \___  >___|  /\___  >__|   
         \/      |__|          \/                   \/     \/     \/         
 )" << '\n';
-
-	AllBypass(); 
-	Sleep(1000);
-	NoFallDamage();
-	Sleep(1000);
-	NoBugDamage();
-	Sleep(1000);
+	CheckPoint = VK_NUMPAD1;
+	ReturnCheckPoint = VK_NUMPAD2;
+	SecondPerson = VK_NUMPAD3;
+	CopyRoomID = VK_NUMPAD4;
+	PasteRoomID = VK_NUMPAD5;
+	DrawCrosshair = VK_NUMPAD6;
+	OnOffBypass = VK_NUMPAD7;
+	SkillE = VK_SHIFT;
+	ThirdPerson = 'V';
+	NoReload_NoChange = VK_F2;
+	NoRecoil = VK_F3;
 	SupportFunction();
 	system(RGS("pause"));
 	return 0;

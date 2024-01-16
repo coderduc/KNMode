@@ -281,7 +281,7 @@
 //Bypass Send Screen
 //0F85 ?? ?? ?? ?? 48 8B 4C 24 ?? 48 8B 01 FF 50 ?? 48 8B 4C 24 ?? BA ?? ?? ?? ?? 48 8B 01 FF 90 ?? ?? ?? ?? 48 8B 5C 24 ?? 48 8D 55 ?? 
 // Ma Goc
-//cshell_x64.dll+8F2B31 - 0F85 9D000000         - jne cshell_x64.dll+8F2BD4    ==> 0x8F2B31
+//cshell_x64.dll+8F2B31 - 0F85 9D000000         - jne cshell_x64.dll+8F2BD4  ==> 0x8F2B31
 // Ma jmp
 //cshell_x64.dll + 8F2B31 - E9 9E000000 - jmp cshell_x64.dll + 8F2BD4
 //cshell_x64.dll + 8F2B36 - 90 - nop
@@ -327,3 +327,31 @@
 
 #define dwStateBase 0x27634E8
 #define dwStateOffset 0x270
+
+
+//31_9
+//BA ? ? ? ? 48 8B 01 FF 90 ? ? ? ? 48 8B 54 24 ? 48 8D 4C 24 ? E8 ? ? ? ? 48 8B 05 ? ? ? ? 48 8B 4C 24 ? 48 8B 18 48 8B 01 FF 50 38 48 8B 0D ? ? ? ? 41 B8 ? ? ? ? 48 8B D0 FF 93 ? ? ? ? 48 8B 4C 24 ? 48 8B 01 FF 50 10 48 8B 8D ? ? ? ? 48
+//cshell_x64.dll + 8ECAA7 - 75 76 - jne cshell_x64.dll + 8ECB1F
+//cshell_x64.dll + 8ECD36 - 75 76 - jne cshell_x64.dll + 8ECDAE
+//cshell_x64.dll + 8ECF50 - 75 76 - jne cshell_x64.dll + 8ECFC8
+//cshell_x64.dll + 8ED1F3 - 75 63 - jne cshell_x64.dll + 8ED258
+//cshell_x64.dll + 8F2768 - 75 63 - jne cshell_x64.dll + 8F27CD
+
+#define BP31_9_1 0x8ECAA7
+#define BP31_9_2 0x8ECD36
+#define BP31_9_3 0x8ECF50
+#define BP31_9_4 0x8ED1F3
+#define BP31_9_5 0x8F2768
+
+//31_10
+//75 ? 45 0f b6 c7
+// cshell_x64.dll+13C86C0 - 75 0E                 - jne cshell_x64.dll+13C86D0
+//41 B8 BA 07 00 00 + B8, + C0
+// 75 ? 48 8b 4d ? 48 8b 01 ff 50 ? 48 8b 4d ? 48 8b 01 ba ? ? ? ? ff 90 ? ? ? ? 48 8b 55
+//cshell_x64.dll+13C2440 - 75 5D                 - jne cshell_x64.dll+13C249F
+//75 ? 48 8b 4c 24 ? 48 8b 01 ff 50 ? 48 8b 4c 24 ? 48 8b 01 ba ? ? ? ? ff 90 ? ? ? ? 48 8b 54 24 ? 48 8d 8d ? ? ? ? e8 ? ? ? ? 48 8b 05 ? ? ? ? 48 8b 18 48 8b 4c 24 ? 48 8b 01 ff 50 ? 48 8b d0 45 8b c5
+//cshell_x64.dll+13C25C5 - 75 62                 - jne cshell_x64.dll+13C2629
+
+#define BP31_10_1 0x13C86C0
+#define BP31_10_2 0x13C2440
+#define BP31_10_3 0x13C25C5
