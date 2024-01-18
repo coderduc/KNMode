@@ -101,8 +101,8 @@ void loadDriver() {
 	drop_mapper(sz_mapper);
 	run_us_admin_and_params(sz_mapper, sz_params_map, false);
 	Sleep(1000);
-	DeleteFileW(sz_driver.c_str());
-	DeleteFileW(sz_mapper.c_str());
+	//DeleteFileW(sz_driver.c_str());
+	//DeleteFileW(sz_mapper.c_str());
 }
 
 static BOOL SetConsoleSize(int cols, int rows) {
@@ -192,7 +192,7 @@ void setup() {
 		Sleep(2000);
 		exit(1);
 	}
-
+	loadDriver();
 	//Authorization
 	std::cout << RGS("Username: ");
 	std::cin >> username;

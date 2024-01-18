@@ -44,13 +44,13 @@
 //cshell_x64.WebView::CFWebView::operator=+56BEED - E8 7E888100 - call cshell_x64.WebView::CFWebView::operator=+D84770
 //cshell_x64.WebView::CFWebView::operator=+56BEF2 - 44 38 3D CF8DC301 - cmp[cshell_x64.dll + 276F448], r15l{ [00000000] }
 //cshell_x64.WebView::CFWebView::operator=+56BEF9 - 74 19 - je cshell_x64.WebView::CFWebView::operator=+56BF14
-#define dwinGameStatus 0x2762F60
+#define dwinGameStatus 0x27FA894
 
 //GM Chat
 // 00 01 00 00 00 00 00 00 E0 93 04
 // cshell_x64.dll+267C960 - 00 01                 - add [rcx],al ==> cshell_x64.dll+267C960 == GM Chat
 //write<int>(_rt.baseAddr + 0x267C960, 257);
-#define dwGMChat 0x2670960
+#define dwGMChat 0x2705A08
 
 ////Address: 4C 8D 25 ?? ?? ?? ?? 48 8B F1 48 89 4C 24 28 B9 ?? ?? ?? ?? 41 8B F8 48 8B DA 4C 8B 08 42 8B 04 09 39 05 ?? ?? ?? ?? 0F 8F
 //crossfire.WebView::CFWebView::operator=+167937 - 48 8D AC 24 F0FBFFFF - lea rbp, [rsp - 00000410]
@@ -65,7 +65,7 @@
 //crossfire.WebView::CFWebView::operator=+16796F - B9 04000000 - mov ecx, 00000004 { 4 }
 //crossfire.WebView::CFWebView::operator=+167974 - 41 8B F8 - mov edi, r8d
 //crossfire.WebView::CFWebView::operator=+167977 - 48 8B DA - mov rbx, rdx
-#define dwWallhack 0x10DE7D0
+#define dwWallhack 0x10B93E0
 
 //Wall hack Offset: 46 0FB6 84 20 ?? ?? ?? ?? 41 FF 91 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8B 08 48 63 85
 //crossfire.exe + 22293B - 46 0FB6 84 20 A7000000 - movzx r8d, byte ptr[rax + r12 + 000000A7] <============ A7 Offset
@@ -125,7 +125,7 @@
 //cshell_x64.dll + 21BF81D - 99 - cdq
 //cshell_x64.dll + 21BF81E - 99 - cdq
 
-#define dwNoRecoil 0x21B47D4
+#define dwNoRecoil 0x22357E4
 
 
 //No Fall Damage
@@ -144,14 +144,14 @@
 //cshell_x64.WebView::CFWebArgument::operator=+5DA - F2 0F5A C8 - cvtsd2ss xmm1, xmm0
 //cshell_x64.WebView::CFWebArgument::operator=+5DE - 48 8B 05 AB136302 - mov rax, [cshell_x64.dll + 276E9D0] { [00000000] }			==> Base: 0x276E9D0
 //cshell_x64.WebView::CFWebArgument::operator=+5E5 - F3 0F11 48 04 - movss[rax + 04], xmm1											==> Offset: 0x4
-#define dwNoFallDamage 0x27629B0
+#define dwNoFallDamage 0x27FA2D0
 #define dwNoFallDamageOffset 0x4
 
 //No Bug Damage
 // 48 8d 15 ? ? ? ? 48 8d 4c 24 ? e8 ? ? ? ? 4c 8d 44 24 ? ba ? ? ? ? 48 8d 8f
 //cshell_x64.WebView::CFWebView::operator=+138075B - 48 8D 15 06118700 - lea rdx, [cshell_x64.dll + 21BBFE8] { ["rez\Butes\%s_DZ.ltc"] } => 0x21BBFE8
 
-#define dwNoBugDamage 0x21B0FA8
+#define dwNoBugDamage 0x2231F98
 
 //48 8d 0d ? ? ? ? e8 ? ? ? ? 48 83 7b ? ? 48 8d 53 ? 75 ? 41 b8 ? ? ? ? 48 8d 0d ? ? ? ? e8 ? ? ? ? 33 c0 48 83 c4 ? 5b c3 cc cc cc cc cc 40 57 48 83 ec ? 48 c7 44 24 ? ? ? ? ? 48 89 5c 24 ? 48 8b d9 33 ff 48 39 79 ? 74 ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 8b 4b ? 48 85 c9 74 ? 48 89 7c 24 ? 48 8b 01 ff 50 ? 48 89 7b ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 89 7c 24 ? 48 8b 4b ? 48 85 c9 74 ? 48 8b 01 ff 50 ? 48 89 7b ? 48 83 7b ? ? 74 ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 8b 4b ? 48 85 c9 74 ? 48 89 7c 24 ? 48 8b 01 ff 50 ? 48 89 7b ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 89 7c 24 ? 48 8b 4b ? 48 85 c9 74 ? 48 8b 01 ff 50 ? 48 89 7b ? 33 c0 48 8b 5c 24 ? 48 83 c4 ? 5f c3 cc cc cc cc cc cc cc cc cc 40 57 48 83 ec ? 48 c7 44 24 ? ? ? ? ? 48 89 5c 24 ? 48 8b d9
 //48 8d 0d ? ? ? ? e8 ? ? ? ? 33 c0 48 83 c4 ? 5b c3 cc cc cc cc cc 40 57 48 83 ec ? 48 c7 44 24 ? ? ? ? ? 48 89 5c 24 ? 48 8b d9 33 ff 48 39 79 ? 74 ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 8b 4b ? 48 85 c9 74 ? 48 89 7c 24 ? 48 8b 01 ff 50 ? 48 89 7b ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 89 7c 24 ? 48 8b 4b ? 48 85 c9 74 ? 48 8b 01 ff 50 ? 48 89 7b ? 48 83 7b ? ? 74 ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 8b 4b ? 48 85 c9 74 ? 48 89 7c 24 ? 48 8b 01 ff 50 ? 48 89 7b ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 89 7c 24 ? 48 8b 4b ? 48 85 c9 74 ? 48 8b 01 ff 50 ? 48 89 7b ? 33 c0 48 8b 5c 24 ? 48 83 c4 ? 5f c3 cc cc cc cc cc cc cc cc cc 40 57 48 83 ec ? 48 c7 44 24 ? ? ? ? ? 48 89 5c 24 ? 48 8b d9
@@ -161,8 +161,8 @@
 //cshell_X64.WebView::CFWebView::operator=+C62FFA - 48 8D 0D 9F70EA00 - lea rcx, [cshell_X64.dll + 20D4820] { ["ImpoUI/NoiseScreen/NoiseScreen1.dtx"] }
 //cshell_X64.WebView::CFWebView::operator=+C63017 - 48 8D 0D 5A70EA00 - lea rcx, [cshell_X64.dll + 20D47F8] { ["ImpoUI/NoiseScreen/NoiseScreen2.dtx"] }
 //cshell_X64.WebView::CFWebView::operator=+C63034 - 48 8D 0D B570EA00 - lea rcx, [cshell_X64.dll + 20D4870] { ["ImpoUI/NoiseScreen/NoiseScreen3.dtx"] }
-#define dwNoFlash1 0x20BD8D8
-#define dwNoFlash2 0x20BD8A8
+#define dwNoFlash1 0x213BA88
+#define dwNoFlash2 0x213BA58
 
 //PlayerMgr
 // 48 8b 1d ? ? ? ? f3 0f 11 4c 19 ? 4b 8b 34 fe 48 8d 15 ? ? ? ? 48 8b ce e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 0f 57 c9 f2 0f 5a c8 48 63 3d ? ? ? ? 48 69 cf ? ? ? ? 48 8b 1d ? ? ? ? f3 0f 11 4c 19 ? 4b 8b 34 fe 48 8d 15 ? ? ? ? 48 8b ce e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 0f 57 c9 f2 0f 5a c8 48 63 3d ? ? ? ? 48 69 cf ? ? ? ? 48 8b 1d ? ? ? ? f3 0f 11 4c 19 ? 48 63 c7
@@ -221,12 +221,14 @@
 #define dwNoSmoke 0x3C93CF
 
 //Z coordinate base: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 00 00 00 00 80 ?? ?? ?? ??
+// cshell_x64.dll+2318040 - 00 00                 - add [rax],al
+//cshell_x64.dll + 29F23F0 - 00 00 - add[rax], al
 //Z coordinate offset 1: F3 0F11 80 ?? ?? ?? ?? F3 0F11 90 ?? ?? ?? ?? F3 0F10 80 ?? ?? ?? ??
 //Z coordinate offset 2: 48 8B 05 ?? ?? ?? ?? 4C 8B B6 ?? ?? ?? ??
 //coordinate base : cshell_x64.dll + 0x295A9D0
 //offset 1 : 548
 //offset 2 : 1A0
-#define dwCoordinate_Base 0x295A9D0
+#define dwCoordinate_Base 0x29F23F0
 #define dwCoordinate_Offset1 0x548
 #define dwCoordinate_Offset2 0x1A0
 
@@ -255,7 +257,7 @@
 //Base: cshell_x64.dll+295A9D0 - 00 00                 - add [rax],al     ==> 0x295A9D0
 //Offset: cshell_x64.dll+993F89 - 8B 81 DC080000        - mov eax,[rcx+000008DC]      ==> 0x8DC
  
-#define dwSkillE_Base 0x295A9D0
+#define dwSkillE_Base 0x29F23F0
 #define dwSkillE_Offset 0x8DC
 
 //Third Person Base: ?? ?? ?? ?? 00 00 00 00 01 01 00 00 ?? 00 00 00 00 00 00 00 00 00 20 43 00 00
@@ -263,7 +265,7 @@
 //Base: cshell_x64.dll+295A980 - 10 12                 - adc [rdx],dl      ==> 0x295A980
 //Offset: cshell_x64.dll+1014CEA - 8B 83 98000000        - mov eax,[rbx+00000098]     ==> 0x98
 
-#define dwThirdPerson_Base 0x295A980
+#define dwThirdPerson_Base 0x29F23A0
 #define dwThirdPerson_Offset 0x98
 
 //Copy room ID
@@ -274,7 +276,7 @@
 // 48 89 8B ?? ?? ?? ?? 4C 8D BB ?? ?? ?? ?? 41 8B 3F
 //Offset 2: cshell_x64.dll+16A026D - 48 89 8B 38010000     - mov [rbx+00000138],rcx				 ==> 0x138
 
-#define dwCopyRoomBase 0x29CD960
+#define dwCopyRoomBase 0x2A65410
 #define dwCopyRoom_Offset1 0x10
 #define dwCopyRoom_Offset2 0x138
 
@@ -286,7 +288,7 @@
 //cshell_x64.dll + 8F2B31 - E9 9E000000 - jmp cshell_x64.dll + 8F2BD4
 //cshell_x64.dll + 8F2B36 - 90 - nop
 
-#define dwBPSendScreen 0x8F2B31
+#define dwBPSendScreen 0x946801
 
 //BypassDetectCheatTool[0]
 //75 ? 48 8b 4c 24 ? 48 8b 01 ff 50 ? 48 8b 4c 24 ? 48 8b 01 ba ? ? ? ? ff 90 ? ? ? ? 48 8b 54 24 ? 48 8d 8d ? ? ? ? e8 ? ? ? ? 48 8b 05 ? ? ? ? 48 8b 18 48 8b 4c 24 ? 48 8b 01 ff 50 ? 48 8b d0 41 b8 ? ? ? ? 48 8b 0d ? ? ? ? ff 93 ? ? ? ? 48 8b 4c 24 ? 48 8b 01 ff 50 ? 41 b6
@@ -295,8 +297,8 @@
 //75 ? 48 8b 4c 24 ? 48 8b 01 ff 50 ? 48 8b 4c 24 ? 48 8b 01 ba ? ? ? ? ff 90 ? ? ? ? 48 8b 54 24 ? 48 8d 4d ? e8 ? ? ? ? 48 8b 05 ? ? ? ? 48 8b 18 48 8b 4c 24 ? 48 8b 01 ff 50 ? 48 8b d0 41 b8 ? ? ? ? 48 8b 0d ? ? ? ? ff 93 ? ? ? ? 48 8b 4c 24 ? 48 8b 01 ff 50 ? 40 b6
 //cshell_x64.dll+8EEC3A - 75 62                 - jne cshell_x64.dll+8EEC9E			==> 0x8EEC3A
 
-#define dwBPToolCheatDetect0 0x8EE55A
-#define dwBPToolCheatDetect1 0x8EEC3A
+#define dwBPToolCheatDetect0 0x94222A
+#define dwBPToolCheatDetect1 0x94290A
 
 
 //20 4d ? 40 01 00 00 00 00 8d
@@ -309,7 +311,7 @@
 //Offset: 41 8b 96 ? ? ? ? 49 8b ce ff 90 ? ? ? ? 84 c0 0f 84 ? ? ? ? 49 8b 06
 //cshell_x64.dll+9A26EB - 41 8B 96 88080000     - mov edx,[r14+00000888]  ==> 0x888
 
-#define dwNR_NCBase 0x295A9D0
+#define dwNR_NCBase 0x29F23F0
 #define dwNR_NCOffset 0x888
 
 //State Check
@@ -337,11 +339,11 @@
 //cshell_x64.dll + 8ED1F3 - 75 63 - jne cshell_x64.dll + 8ED258
 //cshell_x64.dll + 8F2768 - 75 63 - jne cshell_x64.dll + 8F27CD
 
-#define BP31_9_1 0x8ECAA7
-#define BP31_9_2 0x8ECD36
-#define BP31_9_3 0x8ECF50
-#define BP31_9_4 0x8ED1F3
-#define BP31_9_5 0x8F2768
+#define BP31_9_1 0x940777
+#define BP31_9_2 0x940A60
+#define BP31_9_3 0x940C20
+#define BP31_9_4 0x940EC3
+#define BP31_9_5 0x946438
 
 //31_10
 //75 ? 45 0f b6 c7
@@ -352,6 +354,24 @@
 //75 ? 48 8b 4c 24 ? 48 8b 01 ff 50 ? 48 8b 4c 24 ? 48 8b 01 ba ? ? ? ? ff 90 ? ? ? ? 48 8b 54 24 ? 48 8d 8d ? ? ? ? e8 ? ? ? ? 48 8b 05 ? ? ? ? 48 8b 18 48 8b 4c 24 ? 48 8b 01 ff 50 ? 48 8b d0 45 8b c5
 //cshell_x64.dll+13C25C5 - 75 62                 - jne cshell_x64.dll+13C2629
 
-#define BP31_10_1 0x13C86C0
-#define BP31_10_2 0x13C2440
-#define BP31_10_3 0x13C25C5
+#define BP31_10_1 0x142CDB0
+#define BP31_10_2 0x142694F
+#define BP31_10_3 0x1426ACA
+
+//48 8b 05 ? ? ? ? 48 8b 98 ? ? ? ? 48 85 db 0f 84 ? ? ? ? 48 8b 03 48 8b cb ff 90 ? ? ? ? 84 c0 0f 84 ? ? ? ? 48 8b 03 48 8b cb ff 90 ? ? ? ? 8b 4e
+//WTW Base: cshell_x64.dll+11C0C31 - 48 8B 05 B0285A01     - mov rax,[cshell_x64.dll+27634E8] { (7FFEC788A940) } ==> 0x27634E8
+//41 F6 80 ?? ?? ?? ?? ?? 75 49 F3 41 0F10 88 ?? ?? ?? ??
+//WTW Offset 1: unpacked_crossfire.dat+36ED2D - 41 F6 80 20010000 40  - test byte ptr [r8+00000120],40 { 64 } ==> 0x120
+//48 8b 89 ? ? ? ? e8 ? ? ? ? 84 c0 0f 84
+//WTW Offset 2: cshell_x64.dll+11A9930 - 48 8B 89 48050000     - mov rcx,[rcx+00000548]  ==> 0x548
+//48 8b 8b ? ? ? ? 48 85 c9 74 ? 48 8b 01 48 83 c4 ? 5b 48 ff a0 ? ? ? ? 32 c0
+//WTW Offset 3: cshell_x64.dll+13ED4AE - 48 8B 8B 90000000     - mov rcx,[rbx+00000090]	 ==> 0x90
+
+#define dwWTWBase 0x27634E8
+#define dwWTWBase_Offset1 0x120
+#define dwWTWBase_Offset2 0x548
+#define dwWTWBase_Offset3 0x90
+
+//ButeType
+//48 8b 35 ? ? ? ? 89 84 32 ? ? ? ? 49 8b 1f eb
+//cshell_x64.WebView::CFWebView::GetData+1D6A - 48 8B 35 1F056D02     - mov rsi,[cshell_x64.dll+27F93D0] { (0) } ==> 0x27F93D0
