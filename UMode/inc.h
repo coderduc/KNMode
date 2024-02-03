@@ -15,7 +15,9 @@
 #include <conio.h> 
 #include "Address.h"
 #include <stdio.h>
+#include <mmsystem.h>
 #include "rawdata.h"
+#include <map>
 #ifdef _RELEASE
 #pragma comment(lib, "curl/libcurl_a_debug.lib")
 #else
@@ -31,3 +33,8 @@
 #include "skCrypter.h"
 #include "../RebirthGuard/RebirthGuardSDK.h"
 #pragma comment (lib, "RebirthGuard.lib")
+#pragma comment (lib, "winmm.lib")
+
+using namespace std;
+
+#pragma warning(disable: 4996)

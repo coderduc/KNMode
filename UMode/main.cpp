@@ -34,7 +34,8 @@ typedef struct _NULL_MEMORY {
 	ULONG64 base_addr;
 	ULONGLONG sizeDll;
 	ULONG size;
-	ULONG newProtect;
+	DWORD newProtect;
+	DWORD oldProtect;
 }NULL_MEMORY;
 
 struct Dll {
@@ -48,26 +49,27 @@ HANDLE pid = NULL;
 static std::once_flag flag;
 wchar_t currentDir[MAX_PATH];
 StructDll crossfire;
-StructDll cshell;
+StructDll CShell_x64;
 StructDll ClientFx_x64;
+DWORD64 CLT_SHELL;
+StructDll libcef;
 HWND hWnd = NULL;
-DWORD CheckPoint;
-DWORD ReturnCheckPoint;
-DWORD SecondPerson;
-DWORD CopyRoomID;
-DWORD PasteRoomID;
-DWORD DrawCrosshair;
-DWORD OnOffBypass;
-DWORD ThirdPerson;
-DWORD SkillE;
-DWORD NoReload_NoChange;
-DWORD NoRecoil;
+DWORD CheckPoint = NULL;
+DWORD ReturnCheckPoint = NULL;
+DWORD SecondPerson = NULL;
+DWORD CopyRoomID = NULL;
+DWORD PasteRoomID = NULL;
+DWORD DrawCrosshair = NULL;
+DWORD ThirdPerson = NULL;
+DWORD SkillE = NULL;
+DWORD NoReload_NoChange = NULL;
+DWORD NoRecoil = NULL;
 
 template<typename ... A>
 uint64_t call_hook(const A ... arguments)
 {
 	std::call_once(flag, [] { LoadLibraryA(RGS("user32.dll")); });
-	void* control_function = GetProcAddress(LoadLibraryA(RGS("win32u.dll")), RGS("NtDxgkGetTrackedWorkloadStatistics"));
+	void* control_function = GetProcAddress(LoadLibraryA(RGS("win32u.dll")), RGS("NtOpenCompositionSurfaceSectionInfo"));
 	const auto control = static_cast<uint64_t(__stdcall*)(A...)>(control_function);
 	return control(arguments ...);
 }
@@ -106,6 +108,17 @@ T read(UINT_PTR readAddr) {
 	call_hook(instr);
 	return buffer;
 }
+template <class T>
+bool read_raw(UINT_PTR addr, T* buffer, size_t size) {
+	NULL_MEMORY instr = { 0 };
+	instr.pid = pid;
+	instr.addr = addr;
+	instr.read = true;
+	instr.buffer = buffer;
+	instr.size = sizeof(T) * size;
+	call_hook(instr);
+	return true;
+}
 
 template <typename W>
 bool write(UINT_PTR waddr, W value) {
@@ -130,17 +143,23 @@ bool writeBytes(UINT_PTR addr, PVOID buffer, SIZE_T bufferSize) {
 	return true;
 }
 
-bool changeProtection(HANDLE pid, UINT_PTR address, ULONG size, ULONG newProtect) {
+DWORD changeProtection(HANDLE pid, UINT_PTR address, ULONG size, DWORD newProtect) {
 	NULL_MEMORY instr = { 0 };
-	ULONG oldProtect;
 	instr.changeProtect = true;
 	instr.pid = pid;
 	instr.addr = address;
 	instr.size = size;
 	instr.newProtect = newProtect;
-	call_hook(instr);
-	return true;
+	call_hook(&instr);
+	return instr.oldProtect;
 }	
+
+bool writeByteProtect(HANDLE pid, UINT_PTR address, PVOID buffer, SIZE_T bufferSize, DWORD size, DWORD newProtect) {
+	DWORD oldProt = changeProtection(pid, address, size, newProtect);
+	writeBytes(address, buffer, bufferSize);
+	DWORD newProt = changeProtection(pid, address, size, oldProt);
+	return (newProt == newProtect);
+}
 
 bool draw_box(int x, int y, int w, int h, int t, int r, int g, int b) {
 	NULL_MEMORY instr = { 0 };
@@ -228,55 +247,62 @@ bool draw_text(int x, int y, LPCSTR string, UINT len) {
 
 //Game Function
 void NoBugDamage() {
-	changeProtection(pid, cshell.baseAddr + dwNoBugDamage, 19, PAGE_EXECUTE_READWRITE);
+	changeProtection(pid,CShell_x64.baseAddr + dwNoBugDamage, 19, PAGE_EXECUTE_READWRITE);
 	BYTE writeBuffer[] = { 0x72,0x65,0x7A,0x5C,0x42,0x75,0x74,0x65,0x73,0x5C,0x42,0x46,0x30,0x33,0x35 };
-	writeBytes(cshell.baseAddr + dwNoBugDamage, &writeBuffer, sizeof(writeBuffer));
-	changeProtection(pid, cshell.baseAddr + dwNoBugDamage, 19, 0);
+	writeBytes(CShell_x64.baseAddr + dwNoBugDamage, &writeBuffer, sizeof(writeBuffer));
+	changeProtection(pid, CShell_x64.baseAddr + dwNoBugDamage, 19, 0);
 }
 
 void NoFlash() {
 	BYTE bytes[] = { 0x49,0x6d,0x70,0x6f,0x55,0x49,0x2f,0x4e,0x6f,0x69,0x73,0x65,0x53,0x63,0x72,0x65,0x65,0x6e,0x2f,0x4e,0x6f,0x69,0x73,0x65,0x46,0x69,0x6c,0x74,0x65,0x72,0x2e,0x64,0x74,0x78 };
-	changeProtection(pid, cshell.baseAddr + dwNoFlash1, 34, PAGE_EXECUTE_READWRITE);
-	changeProtection(pid, cshell.baseAddr + dwNoFlash2, 34, PAGE_EXECUTE_READWRITE);
-	writeBytes(cshell.baseAddr + dwNoFlash1, &bytes, sizeof(bytes));
-	writeBytes(cshell.baseAddr + dwNoFlash2, &bytes, sizeof(bytes));
-	changeProtection(pid, cshell.baseAddr + dwNoFlash1, 34, 0);
-	changeProtection(pid, cshell.baseAddr + dwNoFlash2, 34, 0);
+	changeProtection(pid, CShell_x64.baseAddr + dwNoFlash1, 34, PAGE_EXECUTE_READWRITE);
+	changeProtection(pid, CShell_x64.baseAddr + dwNoFlash2, 34, PAGE_EXECUTE_READWRITE);
+	writeBytes(CShell_x64.baseAddr + dwNoFlash1, &bytes, sizeof(bytes));
+	writeBytes(CShell_x64.baseAddr + dwNoFlash2, &bytes, sizeof(bytes));
+	changeProtection(pid, CShell_x64.baseAddr + dwNoFlash1, 34, 0);
+	changeProtection(pid, CShell_x64.baseAddr + dwNoFlash2, 34, 0);
 }
 
 void NoFallDamage() {
-	uintptr_t base = read<uintptr_t>(cshell.baseAddr + dwNoFallDamage);
+	uintptr_t base = read<uintptr_t>(CShell_x64.baseAddr + dwNoFallDamage);
 	write<float>(base + dwNoFallDamageOffset, 0.0f);
 }
 
-void Wall_Hack() {
-	bool once_ingame = false;
-	bool once_outgame = false;
-	while (true) {
-		int inGameStatus = read<int>(cshell.baseAddr + dwinGameStatus);
-		if (inGameStatus == 0xB) {
-			if (once_ingame == false) {
-				Sleep(60000);
-				write<int>(crossfire.baseAddr + dwWallhack + dwWallhackOffset, 256);
-				once_ingame = true;
-				once_outgame = false;
-			}
-		}
+class Player {
+public:
+	DWORD64 baseEntity;
 
-		else {
-			if (once_outgame == false) {
-				write<int>(crossfire.baseAddr + dwWallhack + dwWallhackOffset, 257);
-				once_outgame = true;
-				once_ingame = false;
-			}
-		}
+	Player(DWORD64 baseEnt) {
+		baseEntity = baseEnt;
 	}
+
+	void getName(char* buffer, size_t len) {
+		read_raw<char>(baseEntity + 0xA, buffer, len); //Name
+	}
+
+	signed getTeam() {
+		return read<BYTE>(baseEntity + 0x9); // Team
+	}
+
+	int getHealth() {
+		return read<int>(baseEntity + 0x44); // Health
+	}
+
+	int getKill() {
+		return read<int>(baseEntity + 0x48); //Kill
+	}
+
+	void setTeam(BYTE id) {
+		write<BYTE>(baseEntity + 0x9, id);
+	}
+};
+
+DWORD64 GetPlayerByIndex(int i) {
+	return ((CLT_SHELL + ENT_BEGIN + (i * ENT_SIZE)));
 }
 
-void GMChat() {
-	changeProtection(pid, cshell.baseAddr + dwGMChat, 10, PAGE_EXECUTE_READWRITE);
-	write<int>(cshell.baseAddr + dwGMChat, 257);
-	changeProtection(pid, cshell.baseAddr + dwGMChat, 10, 0);
+bool InGame(DWORD64 clt) {
+	return clt && read<BYTE>(clt + LOCAL_ENT);
 }
 
 void SupportFunction() {
@@ -288,107 +314,179 @@ void SupportFunction() {
 	bool isBPOn = false;
 	int roomid = 0;
 
-	uintptr_t thirdPerson_Base = read<uintptr_t>(cshell.baseAddr + dwThirdPerson_Base);
-	uintptr_t copyRoom_base = read<uintptr_t>(cshell.baseAddr + dwCopyRoomBase);
+	uintptr_t thirdPerson_Base = read<uintptr_t>(CShell_x64.baseAddr + dwThirdPerson_Base);
+	uintptr_t copyRoom_base = read<uintptr_t>(CShell_x64.baseAddr + dwCopyRoomBase);
 	uintptr_t copyRoom_base1 = read<uintptr_t>(copyRoom_base + dwCopyRoom_Offset1);
 	while (true) {
-		int inGameStatus = read<int>(cshell.baseAddr + dwinGameStatus);
-
-		//Skill E
-		if (GetAsyncKeyState(SkillE) & 1) {
-			if (inGameStatus == 0xB) {
-				uintptr_t skillE_Base = read<uintptr_t>(cshell.baseAddr + dwSkillE_Base);
-				int skillE_read = read<int>(skillE_Base + dwSkillE_Offset);
-				if (skillE_read == 2) {
-					write<int>(skillE_Base + dwSkillE_Offset, 0);
+		int inGameStatus = read<int>(CShell_x64.baseAddr + dwinGameStatus);
+		if (SkillE) {
+			//Skill E
+			if (GetAsyncKeyState(SkillE) & 1) {
+				if (inGameStatus == 0xB) {
+					uintptr_t skillE_Base = read<uintptr_t>(CShell_x64.baseAddr + dwSkillE_Base);
+					int skillE_read = read<int>(skillE_Base + dwSkillE_Offset);
+					if (skillE_read == 2) {
+						write<int>(skillE_Base + dwSkillE_Offset, 0);
+					}
 				}
 			}
 		}
-
-		//Checkpoint
-		if (GetAsyncKeyState(CheckPoint) & 1) {
-			if (inGameStatus == 0xB) {
-				Beep(500, 300);
-				uintptr_t coordinate_base = read<uintptr_t>(cshell.baseAddr + dwCoordinate_Base);
-				uintptr_t base = read<uintptr_t>(coordinate_base + dwCoordinate_Offset1);
-				oldy = read<float>(base + dwCoordinate_Offset2 - 0x4);
-				oldz = read<float>(base + dwCoordinate_Offset2);
-				oldx = read<float>(base + dwCoordinate_Offset2 + 0x4);
-			}
-		}
-		//Go to the last checkpoint
-		if (GetAsyncKeyState(ReturnCheckPoint) & 1) {
-			if (inGameStatus == 0xB) {
-				Beep(300, 300);
-				uintptr_t coordinate_base = read<uintptr_t>(cshell.baseAddr + dwCoordinate_Base);
-				uintptr_t base = read<uintptr_t>(coordinate_base + dwCoordinate_Offset1);
-				write<float>(base + dwCoordinate_Offset2 - 0x4, oldy);
-				write<float>(base + dwCoordinate_Offset2, oldz);
-				write<float>(base + dwCoordinate_Offset2 + 0x4, oldx);
-			}
-		}
-
-		//Third person
-		if (GetAsyncKeyState(ThirdPerson) & 1) {
-			isSecondPerson = !isSecondPerson;
-			if (isSecondPerson) {
-				write<int>(thirdPerson_Base + dwThirdPerson_Offset, 3);
-			}
-			else {
-				write<int>(thirdPerson_Base + dwThirdPerson_Offset, 1);
-			}
-		}
-
-		//Second person
-		if (GetAsyncKeyState(SecondPerson) & 1) {
-			isSecondPerson = !isSecondPerson;
-			if (isSecondPerson) {
-				write<int>(thirdPerson_Base + dwThirdPerson_Offset, 2);
-			}
-			else {
-				write<int>(thirdPerson_Base + dwThirdPerson_Offset, 1);
-			}
-		}
-
-		//Copy room ID
-		if (GetAsyncKeyState(CopyRoomID) & 1) {
-			Beep(500, 300);
-			roomid = read<int>(copyRoom_base1 + dwCopyRoom_Offset2);
-		}
-
-		if (GetAsyncKeyState(PasteRoomID) & 1) {
-			Beep(300, 300);
-			if (roomid != 0) {
-				write<int>(copyRoom_base1 + dwCopyRoom_Offset2, roomid);
+		
+		
+		if (CheckPoint) {
+			//Checkpoint
+			if (GetAsyncKeyState(CheckPoint) & 1) {
+				if (inGameStatus == 0xB) {
+					Beep(500, 300);
+					uintptr_t coordinate_base = read<uintptr_t>(CShell_x64.baseAddr + dwCoordinate_Base);
+					uintptr_t base = read<uintptr_t>(coordinate_base + dwCoordinate_Offset1);
+					oldy = read<float>(base + dwCoordinate_Offset2 - 0x4);
+					oldz = read<float>(base + dwCoordinate_Offset2);
+					oldx = read<float>(base + dwCoordinate_Offset2 + 0x4);
+				}
 			}
 		}
 		
-		if (GetAsyncKeyState(DrawCrosshair) & 1) {
-			Beep(300, 500);
-			isDrawCrosshair = !isDrawCrosshair;
-		}
-		if (isDrawCrosshair) {
-			int width = 0, height = 0;
-			RECT rect;
-			if (GetWindowRect(FindWindowA(0, RGS("CROSSFIRE")), &rect))
-			{
-				width = rect.right - rect.left;
-				height = rect.bottom - rect.top;
+		if (ReturnCheckPoint) {
+			//Go to the last checkpoint
+			if (GetAsyncKeyState(ReturnCheckPoint) & 1) {
+				if (inGameStatus == 0xB) {
+					Beep(300, 300);
+					uintptr_t coordinate_base = read<uintptr_t>(CShell_x64.baseAddr + dwCoordinate_Base);
+					uintptr_t base = read<uintptr_t>(coordinate_base + dwCoordinate_Offset1);
+					write<float>(base + dwCoordinate_Offset2 - 0x4, oldy);
+					write<float>(base + dwCoordinate_Offset2, oldz);
+					write<float>(base + dwCoordinate_Offset2 + 0x4, oldx);
+				}
 			}
-			draw_box((width / 2), (height / 2), 3, 3, 3, 255, 0, 0);
+		}
+		
+		if (ThirdPerson) {
+			//Third person
+			if (GetAsyncKeyState(ThirdPerson) & 1) {
+				isSecondPerson = !isSecondPerson;
+				if (isSecondPerson) {
+					write<int>(thirdPerson_Base + dwThirdPerson_Offset, 3);
+				}
+				else {
+					write<int>(thirdPerson_Base + dwThirdPerson_Offset, 1);
+				}
+			}
+		}
+		
+		if (SecondPerson) {
+			//Second person
+			if (GetAsyncKeyState(SecondPerson) & 1) {
+				isSecondPerson = !isSecondPerson;
+				if (isSecondPerson) {
+					write<int>(thirdPerson_Base + dwThirdPerson_Offset, 2);
+				}
+				else {
+					write<int>(thirdPerson_Base + dwThirdPerson_Offset, 1);
+				}
+			}
+		}
+		
+		if (CopyRoomID) {
+			//Copy room ID
+			if (GetAsyncKeyState(CopyRoomID) & 1) {
+				Beep(500, 300);
+				roomid = read<int>(copyRoom_base1 + dwCopyRoom_Offset2);
+			}
+		}
+		
+		if (PasteRoomID) {
+			//Paste room ID
+			if (GetAsyncKeyState(PasteRoomID) & 1) {
+				Beep(300, 300);
+				if (roomid != 0) {
+					write<int>(copyRoom_base1 + dwCopyRoom_Offset2, roomid);
+				}
+			}
+		}
+		
+		
+		if (inGameStatus == 11) {
+			if (GetAsyncKeyState(VK_LBUTTON)) {
+				DWORD oldProt = changeProtection(pid, CShell_x64.baseAddr + dwNoRecoil, 1, PAGE_EXECUTE_READWRITE);
+				write<float>(CShell_x64.baseAddr + dwNoRecoil, 0.0f);
+				changeProtection(pid, CShell_x64.baseAddr + dwNoRecoil, 1, oldProt);
+			}
+			else {
+				DWORD oldProt = changeProtection(pid, CShell_x64.baseAddr + dwNoRecoil, 1, PAGE_EXECUTE_READWRITE);
+				write<float>(CShell_x64.baseAddr + dwNoRecoil, -1.0f);
+				changeProtection(pid, CShell_x64.baseAddr + dwNoRecoil, 1, oldProt);
+			}
 		}
 
+		if (DrawCrosshair) {
+			//Draw crosshair
+			if (GetAsyncKeyState(DrawCrosshair) & 1) {
+				Beep(300, 500);
+				isDrawCrosshair = !isDrawCrosshair;
+			}
+			if (isDrawCrosshair) {
+				int width = 0, height = 0;
+				RECT rect;
+				if (GetWindowRect(FindWindowA(0, RGS("CROSSFIRE")), &rect))
+				{
+					width = rect.right - rect.left;
+					height = rect.bottom - rect.top;
+				}
+				draw_box(width / 2,  height / 2, 3, 3, 3, 255, 0, 0);
+			}
+		}
 		NoBugDamage();
+
+		CLT_SHELL = read<uintptr_t>(CShell_x64.baseAddr + LTShell);
+		if (InGame(CLT_SHELL)) {
+			signed meIndex = read<BYTE>(CLT_SHELL + LOCAL_ENT_INDEX);
+			Player localPlayer(GetPlayerByIndex(meIndex));
+			if (localPlayer.getTeam() == 0) {
+				if (GetAsyncKeyState(VK_XBUTTON1)) {
+					for (int i = 0; i < 17; i++) {
+						Player curP(GetPlayerByIndex(i));
+						if (meIndex == i) continue;
+						curP.setTeam(0);
+					}
+				}
+				else {
+					for (int i = 0; i < 17; i++) {
+						Player curP(GetPlayerByIndex(i));
+						if (meIndex == i) continue;
+						curP.setTeam(1);
+					}
+				}
+			}
+			else {
+				if (GetAsyncKeyState(VK_XBUTTON1)) {
+					for (int i = 0; i < 17; i++) {
+						Player curP(GetPlayerByIndex(i));
+						if (meIndex == i) continue;
+						curP.setTeam(1);
+					}
+				}
+				else {
+					for (int i = 0; i < 17; i++) {
+						Player curP(GetPlayerByIndex(i));
+						if (meIndex == i) continue;
+						curP.setTeam(0);
+					}
+				}
+			}
+		}
+		std::this_thread::sleep_for(std::chrono::microseconds(1));
 	}
 }
 
-int main(void) {
+int main(void){
 	setup();
 	Sleep(1000);
-	if (!pid && !crossfire.baseAddr && !cshell.baseAddr && !ClientFx_x64.baseAddr) {
+	
+	if (!pid && !crossfire.baseAddr && !CShell_x64.baseAddr && !ClientFx_x64.baseAddr) {
 		pid = get_process_id(RGS("crossfire.dat"));
 		crossfire = get_module_base_addr(RGS("crossfire.dat"));
-		cshell = get_module_base_addr(RGS("cshell_x64.dll"));
+		CShell_x64 = get_module_base_addr(RGS("cshell_x64.dll"));
 		ClientFx_x64 = get_module_base_addr(RGS("ClientFx_x64.fxd"));
 	}
 	std::cout << R"(
@@ -400,17 +498,69 @@ int main(void) {
         \/      |__|          \/                   \/     \/     \/         
 )" << '\n';
 	
-	CheckPoint = VK_F2;
-	ReturnCheckPoint = VK_F3;
-	SecondPerson = 'V';
-	CopyRoomID = VK_F4;
-	PasteRoomID = VK_F5;
-	DrawCrosshair = VK_F6;
-	SkillE = VK_SHIFT;
-	SupportFunction();
+	//uintptr_t CharacterFuncBase = read<uintptr_t>(CShell_x64.baseAddr + dwCharacterFunc);
+	//for (int i = 0; i <= 511; i++) {
+	//	uintptr_t p1 = read<uintptr_t>(CharacterFuncBase + (i * 8));
+	//	uintptr_t p2 = read<uintptr_t>(p1 + 0x0);
+	//	uintptr_t p3 = read<uintptr_t>(p2 + 0x18);
+	//	uintptr_t p4 = read<uintptr_t>(p3 + 0x0);
+	//	write<int>(p4 + 0xD08, 3211522); //Mua Quat + Giam Choang + Giam Smoke: 3211522
+	//}
+	char name[12];
+	while (1) {
+		CLT_SHELL = read<uintptr_t>(CShell_x64.baseAddr + LTShell);
+		if (InGame(CLT_SHELL)) {
+			signed meIndex = read<BYTE>(CLT_SHELL + LOCAL_ENT_INDEX);
+			Player localPlayer(GetPlayerByIndex(meIndex));
+			localPlayer.getName(name, 12);
+			std::cout << name << endl;
+			/*for (int i = 0; i < 16; i++) {
+				Player curP(GetPlayerByIndex(i));
+				if(curP.getTeam() != curP.)
+			}*/
+		}
+		Sleep(1);
+	}
+	
+
+	//CheckPoint = VK_F2;
+	//ReturnCheckPoint = VK_F3;
+	//SecondPerson = 'V';
+	//CopyRoomID = VK_F4;
+	//PasteRoomID = VK_F5;
+	//DrawCrosshair = VK_F6;
+	//SkillE = VK_SHIFT;
+	//SupportFunction();
+
 	system(RGS("pause"));
 	return 0;
 }
+
+
+////ModelBute (Damage Factor)
+	//uintptr_t base = read<uintptr_t>(crossfire.baseAddr + 0x109FE60);
+	//uintptr_t p = read<uintptr_t>(base + 0x40);
+	//uintptr_t p1 = read<uintptr_t>(p + 0x10);
+
+	//for (int i = 0; i < 2839; i++) {
+	//	uintptr_t p2 = read<uintptr_t>(p1 + (i * 8));
+	//	float r = read<float>(p2 + 0x38);
+	//	cout << i << " - " << r << endl;
+	//}
+
+//Dimensions Log
+//ofstream fileout("1.txt");
+//fileout << "{ ";
+//for (int i = 1; i <= 2915; i++) {
+//
+//	float x = read<float>(dDimensionBase + (i - 1) * 0xA4 + 0x38);
+//	float y = read<float>(dDimensionBase + (i - 1) * 0xA4 + 0x3C);
+//	float z = read<float>(dDimensionBase + (i - 1) * 0xA4 + 0x40);
+//	if (x == 99.0 && y == 99.0 && z == 99.0)
+//		fileout << "{" << i << ", {" << x << "," << y << "," << z << "} }, ";
+//}
+//fileout << "}";
+//fileout.close();
 
 ////Room bot
 		//if (GetAsyncKeyState(VK_F4) & 1) {
@@ -424,6 +574,20 @@ int main(void) {
 		//		}
 		//	}
 		//}
+
+/*vector<pair<int, vector<float>>> DimensionsMod = { {1139, {150, 200, 150}}, {31, {99,99,99} }, {46, {99,99,99} }, {72, {99,99,99} }, {88, {99,99,99} }, {103, {99,99,99} }, {118, {99,99,99} }, {140, {99,99,99} }, {159, {99,99,99} }, {160, {99,99,99} }, {189, {99,99,99} }, {204, {99,99,99} }, {264, {99,99,99} }, {284, {99,99,99} }, {312, {99,99,99} }, {328, {99,99,99} }, {345, {99,99,99} }, {362, {99,99,99} }, {377, {99,99,99} }, {393, {99,99,99} }, {431, {99,99,99} }, {446, {99,99,99} }, {468, {99,99,99} }, {489, {99,99,99} }, {530, {99,99,99} }, {545, {99,99,99} }, {571, {99,99,99} }, {604, {99,99,99} }, {619, {99,99,99} }, {632, {99,99,99} }, {634, {99,99,99} }, {654, {99,99,99} }, {675, {99,99,99} }, {706, {99,99,99} }, {717, {99,99,99} }, {727, {99,99,99} }, {735, {99,99,99} }, {743, {99,99,99} }, {761, {99,99,99} }, {771, {99,99,99} }, {782, {99,99,99} }, {792, {99,99,99} }, {800, {99,99,99} }, {811, {99,99,99} }, {821, {99,99,99} }, {829, {99,99,99} }, {837, {99,99,99} }, {855, {99,99,99} }, {865, {99,99,99} }, {876, {99,99,99} }, {886, {99,99,99} }, {910, {99,99,99} }, {923, {99,99,99} }, {938, {99,99,99} }, {953, {99,99,99} }, {999, {99,99,99} }, {1026, {99,99,99} }, {1036, {99,99,99} }, {1051, {99,99,99} }, {1062, {99,99,99} }, {1063, {99,99,99} }, {1079, {99,99,99} }, {1090, {99,99,99} }, {1105, {99,99,99} }, {1140, {99,99,99} }, {1158, {99,99,99} }, {1173, {99,99,99} }, {1188, {99,99,99} }, {1213, {99,99,99} }, {1228, {99,99,99} }, {1248, {99,99,99} }, {1249, {99,99,99} }, {1250, {99,99,99} }, {1266, {99,99,99} }, {1282, {99,99,99} }, {1283, {99,99,99} }, {1312, {99,99,99} }, {1329, {99,99,99} }, {1353, {99,99,99} }, {1378, {99,99,99} }, {1406, {99,99,99} }, {1416, {99,99,99} }, {1424, {99,99,99} }, {1442, {99,99,99} }, {1465, {99,99,99} }, {1480, {99,99,99} }, {1506, {99,99,99} }, {1514, {99,99,99} }, {1532, {99,99,99} }, {1547, {99,99,99} }, {1592, {99,99,99} }, {1602, {99,99,99} }, {1619, {99,99,99} }, {1629, {99,99,99} }, {1640, {99,99,99} }, {1648, {99,99,99} }, {1649, {99,99,99} }, {1678, {99,99,99} }, {1696, {99,99,99} }, {1709, {99,99,99} }, {1725, {99,99,99} }, {1739, {99,99,99} }, {1768, {99,99,99} }, {1784, {99,99,99} }, {1797, {99,99,99} }, {1799, {99,99,99} }, {1826, {99,99,99} }, {1850, {99,99,99} }, {1882, {99,99,99} }, {1897, {99,99,99} }, {1916, {99,99,99} }, {1941, {99,99,99} }, {1953, {99,99,99} }, {1979, {99,99,99} }, {1980, {99,99,99} }, {1991, {99,99,99} }, {2007, {99,99,99} }, {2034, {99,99,99} }, {2071, {99,99,99} }, {2072, {99,99,99} }, {2101, {99,99,99} }, {2116, {99,99,99} }, {2181, {99,99,99} }, {2224, {99,99,99} }, {2248, {99,99,99} }, {2272, {99,99,99} }, {2294, {99,99,99} }, {2313, {99,99,99} }, {2328, {99,99,99} }, {2342, {99,99,99} }, {2343, {99,99,99} }, {2372, {99,99,99} }, {2387, {99,99,99} }, {2388, {99,99,99} }, {2417, {99,99,99} }, {2441, {99,99,99} }, {2442, {99,99,99} }, {2471, {99,99,99} }, {2508, {99,99,99} }, {2509, {99,99,99} }, {2546, {99,99,99} }, {2567, {99,99,99} }, {2568, {99,99,99} }, {2597, {99,99,99} }, {2613, {99,99,99} }, {2628, {99,99,99} }, {2629, {99,99,99} }, {2694, {99,99,99} }, {2710, {99,99,99} }, {2725, {99,99,99} }, {2744, {99,99,99} }, {2783, {99,99,99} }, {2800, {99,99,99} }, {2820, {99,99,99} }, {2840, {99,99,99} }, {2866, {99,99,99} }, {2877, {99,99,99} }, {2903, {99,99,99} }, {2904, {99,99,99} } };
+	uintptr_t dDimensionBase = read<uintptr_t>(CShell_x64.baseAddr + 0x2771908);
+
+	for (int i = 1; i <= 2915; i++) {
+		for (int j = 0; j < DimensionsMod.size(); j++) {
+			if (i == DimensionsMod[j].first) {
+				write<float>(dDimensionBase + (i - 1) * 0xA4 + 0x38, DimensionsMod[j].second[0]);
+				write<float>(dDimensionBase + (i - 1) * 0xA4 + 0x3C, DimensionsMod[j].second[1]);
+				write<float>(dDimensionBase + (i - 1) * 0xA4 + 0x40, DimensionsMod[j].second[2]);
+				break;
+			}
+		}
+	}*/
 
 ////Bunnyhop
 //if (GetAsyncKeyState(VK_F4) & 1) {

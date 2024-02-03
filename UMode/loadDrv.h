@@ -97,12 +97,14 @@ void loadDriver() {
 	std::wstring sz_driver = get_random_file_name_directory(s2ws(drv));
 	std::wstring sz_mapper = get_random_file_name_directory(s2ws(mapper));
 	std::wstring sz_params_map = sz_driver;
+
 	drop_driver(sz_driver);
 	drop_mapper(sz_mapper);
+
 	run_us_admin_and_params(sz_mapper, sz_params_map, false);
 	Sleep(1000);
-	//DeleteFileW(sz_driver.c_str());
-	//DeleteFileW(sz_mapper.c_str());
+	DeleteFileW(sz_driver.c_str());
+	DeleteFileW(sz_mapper.c_str());
 }
 
 static BOOL SetConsoleSize(int cols, int rows) {
@@ -193,55 +195,55 @@ void setup() {
 		exit(1);
 	}
 	loadDriver();
-	//Authorization
-	std::cout << RGS("Username: ");
-	std::cin >> username;
-	std::cout << RGS("Password: ");
-	password = takePasswdFromUser();
-	std::cout << "\n";
-	std::string data = RGS("username=") + username + RGS("&password=") + password;
-	const char* data2Send = data.c_str();
+	////Authorization
+	//std::cout << RGS("Username: ");
+	//std::cin >> username;
+	//std::cout << RGS("Password: ");
+	//password = takePasswdFromUser();
+	//std::cout << "\n";
+	//std::string data = RGS("username=") + username + RGS("&password=") + password;
+	//const char* data2Send = data.c_str();
 
-	struct curl_slist* headers = NULL;
+	//struct curl_slist* headers = NULL;
 
-	curl_global_init(CURL_GLOBAL_ALL);
-	curl = curl_easy_init();
-	if (curl) {
-		headers = curl_slist_append(headers, RGS("X-Parse-Application-Id: aaaaaaahffb831460d02f0a4be23419e5cc3920d"));
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data2Send);
-		curl_easy_setopt(curl, CURLOPT_URL, RGS("https://apps.simbla.com/parse/login"));
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-		curl_easy_perform(curl);
-		if (readBuffer.find(RGS("objectId")) != std::string::npos) {
-			std::cout << RGS("[+] Login successfully !") << std::endl;
-			Sleep(5000);
-			system("cls");
-			int bar1 = 177, bar2 = 219;
-			std::cout << RGS("\n\n\n\t\t\t\t   [>] Loading ...");
-			std::cout << RGS("\n\n\n\t\t\t\t");
-			for (int i = 0; i < 25; i++) {
-				std::cout << (char)bar1;
-			}
-			std::cout << RGS("\r");
-			std::cout << RGS("\t\t\t\t");
-			for (int i = 0; i < 25; i++) {
-				std::cout << (char)bar2;
-				Sleep(150);
-			}
-			std::cout << "\n";
-			loadDriver();
-			system("cls");
-			
-		}
-		else {
-			std::cout << RGS("[!] Failed to log in !") << std::endl;
-			Sleep(2000);
-			exit(1);
-		}
-		curl_easy_cleanup(curl);
-	}
-	curl_slist_free_all(headers);
-	curl_global_cleanup();
+	//curl_global_init(CURL_GLOBAL_ALL);
+	//curl = curl_easy_init();
+	//if (curl) {
+	//	headers = curl_slist_append(headers, RGS("X-Parse-Application-Id: aaaaaaahffb831460d02f0a4be23419e5cc3920d"));
+	//	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+	//	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data2Send);
+	//	curl_easy_setopt(curl, CURLOPT_URL, RGS("https://apps.simbla.com/parse/login"));
+	//	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+	//	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+	//	curl_easy_perform(curl);
+	//	if (readBuffer.find(RGS("objectId")) != std::string::npos) {
+	//		std::cout << RGS("[+] Login successfully !") << std::endl;
+	//		Sleep(5000);
+	//		system("cls");
+	//		int bar1 = 177, bar2 = 219;
+	//		std::cout << RGS("\n\n\n\t\t\t\t   [>] Loading ...");
+	//		std::cout << RGS("\n\n\n\t\t\t\t");
+	//		for (int i = 0; i < 25; i++) {
+	//			std::cout << (char)bar1;
+	//		}
+	//		std::cout << RGS("\r");
+	//		std::cout << RGS("\t\t\t\t");
+	//		for (int i = 0; i < 25; i++) {
+	//			std::cout << (char)bar2;
+	//			Sleep(150);
+	//		}
+	//		std::cout << "\n";
+	//		loadDriver();
+	//		system("cls");
+	//		
+	//	}
+	//	else {
+	//		std::cout << RGS("[!] Failed to log in !") << std::endl;
+	//		Sleep(2000);
+	//		exit(1);
+	//	}
+	//	curl_easy_cleanup(curl);
+	//}
+	//curl_slist_free_all(headers);
+	//curl_global_cleanup();
 }

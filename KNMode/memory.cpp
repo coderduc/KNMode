@@ -127,10 +127,11 @@ StructDll GetDllBase(PEPROCESS process, UNICODE_STRING moduleName)
 	return rt;
 }
 
-NTSTATUS ProtectVirtualMemory(HANDLE ProcessID, PVOID Address, ULONG SizeOfMem, ULONG NewProt) {
+DWORD ProtectVirtualMemory(HANDLE ProcessID, PVOID Address, ULONG SizeOfMem, ULONG NewProt)
+{
 	NTSTATUS Status = STATUS_SUCCESS;
 	KAPC_STATE State;
-	ULONG oldProt = 0;
+	DWORD oldProt = 0;
 	PEPROCESS Process;
 	PsLookupProcessByProcessId(ProcessID, &Process);
 
@@ -140,8 +141,10 @@ NTSTATUS ProtectVirtualMemory(HANDLE ProcessID, PVOID Address, ULONG SizeOfMem, 
 		return STATUS_UNSUCCESSFUL;
 	}
 	KeUnstackDetachProcess(&State);
-	return Status;
+	return oldProt;
 }
+
+
 
 bool write_to_read_only_memory(void* address, PVOID buffer, size_t size) {
 
@@ -206,7 +209,6 @@ bool read_kernel_memory(HANDLE pid, PVOID address, void* buffer, SIZE_T size) {
 	if (!address || !buffer || !size)
 		return false;
 
-	DbgPrintEx(0, 0, "%x", size);
 	SIZE_T bytes = 0;
 	PEPROCESS process;
 	if (!NT_SUCCESS(PsLookupProcessByProcessId(pid, &process))) {
@@ -214,7 +216,7 @@ bool read_kernel_memory(HANDLE pid, PVOID address, void* buffer, SIZE_T size) {
 		return false;
 	}
 
-	return MmCopyVirtualMemory(process, address, PsGetCurrentProcess(), (void*)buffer, size, KernelMode, &bytes) == STATUS_SUCCESS;
+	return MmCopyVirtualMemory(process, (PVOID)address, PsGetCurrentProcess(), buffer, size, KernelMode, &bytes) == STATUS_SUCCESS;
 }
 
 bool write_kernel_memory(HANDLE pid, PVOID address, void* buffer, SIZE_T size) {
@@ -228,5 +230,5 @@ bool write_kernel_memory(HANDLE pid, PVOID address, void* buffer, SIZE_T size) {
 		return false;
 	}
 
-	return MmCopyVirtualMemory(PsGetCurrentProcess(), address, process, buffer, size, KernelMode, &bytes) == STATUS_SUCCESS;
+	return MmCopyVirtualMemory(PsGetCurrentProcess(), (PVOID)address, process, buffer, size, KernelMode, &bytes) == STATUS_SUCCESS;
 }

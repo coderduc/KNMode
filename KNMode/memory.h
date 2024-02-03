@@ -10,4 +10,4 @@ bool write_to_read_only_memory(void* address, PVOID buffer, size_t size);
 bool read_kernel_memory(HANDLE pid, PVOID address, void* buffer, SIZE_T size);
 bool write_kernel_memory(HANDLE pid, PVOID address, void* buffer, SIZE_T size);
 StructDll GetDllBase(PEPROCESS process, UNICODE_STRING moduleName);
-NTSTATUS ProtectVirtualMemory(HANDLE ProcessID, PVOID Address, ULONG SizeOfMem, ULONG NewProt);
+DWORD ProtectVirtualMemory(HANDLE ProcessID, PVOID Address, ULONG SizeOfMem, ULONG NewProt);

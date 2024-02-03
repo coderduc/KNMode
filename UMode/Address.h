@@ -375,3 +375,176 @@
 //ButeType
 //48 8b 35 ? ? ? ? 89 84 32 ? ? ? ? 49 8b 1f eb
 //cshell_x64.WebView::CFWebView::GetData+1D6A - 48 8B 35 1F056D02     - mov rsi,[cshell_x64.dll+27F93D0] { (0) } ==> 0x27F93D0
+
+
+//Walllist
+//48 8d 15 ? ? ? ? e8 ? ? ? ? 48 85 c0 0f 84 ? ? ? ? 0f 57 c0 f3 0f 7f 44 24 ? 45 33 ff
+
+//CharacterFunc
+//48 8b 15 ? ? ? ? 48 23 0d
+//cshell_x64.WebView::CFWebView::GetData+3FF9 - 48 8B 15 A86C9302     - mov rdx,[cshell_x64.dll+2A61DE8] { (260265BAA60) }
+//cshell_x64.WebView::CFWebView::GetData+4000 - 48 23 0D B96C9302     - and rcx,[cshell_x64.dll+2A61E00] { (7) }
+//cshell_x64.WebView::CFWebView::GetData+4317 - 48 8B 15 CA699302     - mov rdx,[cshell_x64.dll+2A61E28] { (260265BACA0) }
+//cshell_x64.WebView::CFWebView::GetData + 431E - 48 23 0D DB699302 - and rcx, [cshell_x64.dll + 2A61E40] { (7) }
+
+#define dwCharacterFunc 0x2A61DE8
+
+
+////CFO
+////  //48 8b 05 ? ? ? ? ba ? ? ? ? 48 8b 88 ? ? ? ? 48 8b 01 ff 90 ? ? ? ? 40 0f b6 d7
+////  /*
+////	cshell_x64.dll+795D30 - 48 8B 05 61272102     - mov rax,[cshell_x64.dll+29A8498] { (7FF8064F07F0) }  ==> 0x29A8498
+////	cshell_x64.dll+795D37 - BA 01000000           - mov edx,00000001 { 1 }
+////	cshell_x64.dll+795D3C - 48 8B 88 90000000     - mov rcx,[rax+00000090]
+////	cshell_x64.dll+795D43 - 48 8B 01              - mov rax,[rcx]
+////	cshell_x64.dll+795D46 - FF 90 700E0000        - call qword ptr [rax+00000E70]
+////	cshell_x64.dll+795D4C - 40 0FB6 D7            - movzx edx,dil
+////	cshell_x64.dll+795D50 - 48 8B CB              - mov rcx,rbx
+////	cshell_x64.dll+795D53 - E8 88FEFFFF           - call cshell_x64.dll+795BE0
+////	cshell_x64.dll+795D58 - 48 8B 5C 24 50        - mov rbx,[rsp+50]
+////	cshell_x64.dll+795D5D - 48 83 C4 40           - add rsp,40 { 64 }
+////	cshell_x64.dll+795D61 - 5F                    - pop rdi
+////
+////  */
+//#define LTShell						0x29A8498
+//
+////  //48 69 c8 ? ? ? ? 0f 29 b4 24 ? ? ? ? 48 8b 05
+////
+////  /*
+////	cshell_x64.dll+14A839D - 48 69 C8 C80D0000     - imul rcx,rax,00000DC8 { 3528 }
+////	cshell_x64.dll+14A83A4 - 0F29 B4 24 F0000000   - movaps [rsp+000000F0],xmm6
+////	cshell_x64.dll+14A83AC - 48 8B 05 A5767401     - mov rax,[cshell_x64.dll+2BEFA58] { (12C12200) }
+////	cshell_x64.dll+14A83B3 - 4C 8B BC 39 80020000  - mov r15,[rcx+rdi+00000280]    ==> 0x00000280
+////	cshell_x64.dll+14A83BB - 48 85 C0              - test rax,rax
+////
+////  */
+////  const DWORD ENT_BEGIN = 0x280;
+//
+//#define ENT_BEGIN					0x280
+//
+////  //4d 85 c0 74 ? 41 8b 80 ? ? ? ? 89 02
+////  /*
+////	cshell_x64.dll+2E439C - 48 69 C8 C80D0000     - imul rcx,rax,00000DC8 { 3528 }    ==> 0x00000DC8
+////	cshell_x64.dll+2E43A3 - 48 8B 05 EE406C02     - mov rax,[cshell_x64.dll+29A8498] { (7FF8064F07F0) }
+////	cshell_x64.dll+2E43AA - 4C 8B 84 01 98020000  - mov r8,[rcx+rax+00000298]
+////	cshell_x64.dll+2E43B2 - 4D 85 C0              - test r8,r8
+////
+////  */
+////  const DWORD ENT_SIZE = 0xDC8;
+//
+//#define ENT_SIZE					0xDC8
+//
+//
+////48 8b 05 ? ? ? ? 48 8b 88 ? ? ? ? 48 85 c9 74 ? 48 8b 01 ff 90 ? ? ? ? 83 3d
+///*
+//	cshell_x64.dll+14B807E - 48 8B 05 13044F01     - mov rax,[cshell_x64.dll+29A8498] { (7FF8F19A07F0) }
+//	shell_x64.dll+14B8085 - 48 8B 88 90000000     - mov rcx,[rax+00000090]
+//	cshell_x64.dll+14B808C - 48 85 C9              - test rcx,rcx
+//*/
+//
+//#define LOCAL_ENT					0x90
+//
+////4c 8b 35 ? ? ? ? 48 89 4d
+///*
+//	cshell_x64.dll+125CA22 - 4C 8B 35 B7E35901     - mov r14,[cshell_x64.dll+27FADE0] { (7FF861D52360) }
+//	cshell_x64.dll+125CA29 - 48 89 4D A0           - mov [rbp-60],rcx
+//	cshell_x64.dll+125CA2D - 41 0FB6 86 81020000   - movzx eax,byte ptr [r14+00000281]
+//	cshell_x64.dll+125CA35 - 4C 69 F8 80200000     - imul r15,rax,00002080 { 8320 }
+//	cshell_x64.dll+125CA3C - 89 44 24 70           - mov [rsp+70],eax
+//*/
+//#define LOCAL_ENT_INDEX				0x279
+//
+//
+////cshell_x64.dll + BDB053 - 8B 15 ABCEDC01 - mov edx, [cshell_x64.dll + 29A7F04] { (8) }
+// 
+//#define CFO_InGameState 0x29A7F04
+
+
+
+//CFVN
+//  //48 8b 05 ? ? ? ? ba ? ? ? ? 48 8b 88 ? ? ? ? 48 8b 01 ff 90 ? ? ? ? 40 0f b6 d7
+//  /*
+//	cshell_x64.dll+795D30 - 48 8B 05 61272102     - mov rax,[cshell_x64.dll+29A8498] { (7FF8064F07F0) }  ==> 0x29A8498
+//	cshell_x64.dll+795D37 - BA 01000000           - mov edx,00000001 { 1 }
+//	cshell_x64.dll+795D3C - 48 8B 88 90000000     - mov rcx,[rax+00000090]
+//	cshell_x64.dll+795D43 - 48 8B 01              - mov rax,[rcx]
+//	cshell_x64.dll+795D46 - FF 90 700E0000        - call qword ptr [rax+00000E70]
+//	cshell_x64.dll+795D4C - 40 0FB6 D7            - movzx edx,dil
+//	cshell_x64.dll+795D50 - 48 8B CB              - mov rcx,rbx
+//	cshell_x64.dll+795D53 - E8 88FEFFFF           - call cshell_x64.dll+795BE0
+//	cshell_x64.dll+795D58 - 48 8B 5C 24 50        - mov rbx,[rsp+50]
+//	cshell_x64.dll+795D5D - 48 83 C4 40           - add rsp,40 { 64 }
+//	cshell_x64.dll+795D61 - 5F                    - pop rdi
+//
+//  */
+#define LTShell						0x27FADE0
+
+//  //48 69 c8 ? ? ? ? 0f 29 b4 24 ? ? ? ? 48 8b 05
+//
+//  /*
+//	cshell_x64.dll+14A839D - 48 69 C8 C80D0000     - imul rcx,rax,00000DC8 { 3528 }
+//	cshell_x64.dll+14A83A4 - 0F29 B4 24 F0000000   - movaps [rsp+000000F0],xmm6
+//	cshell_x64.dll+14A83AC - 48 8B 05 A5767401     - mov rax,[cshell_x64.dll+2BEFA58] { (12C12200) }
+//	cshell_x64.dll+14A83B3 - 4C 8B BC 39 80020000  - mov r15,[rcx+rdi+00000280]    ==> 0x00000280
+//	cshell_x64.dll+14A83BB - 48 85 C0              - test rax,rax
+//
+//  */
+//  const DWORD ENT_BEGIN = 0x280;
+
+#define ENT_BEGIN					0x288
+
+//  //4d 85 c0 74 ? 41 8b 80 ? ? ? ? 89 02
+//  /*
+//	cshell_x64.dll+2E439C - 48 69 C8 C80D0000     - imul rcx,rax,00000DC8 { 3528 }    ==> 0x00000DC8
+//	cshell_x64.dll+2E43A3 - 48 8B 05 EE406C02     - mov rax,[cshell_x64.dll+29A8498] { (7FF8064F07F0) }
+//	cshell_x64.dll+2E43AA - 4C 8B 84 01 98020000  - mov r8,[rcx+rax+00000298]
+//	cshell_x64.dll+2E43B2 - 4D 85 C0              - test r8,r8
+//
+//  */
+//  const DWORD ENT_SIZE = 0xDC8;
+
+#define ENT_SIZE					0x2080
+
+//48 8b 05 ? ? ? ? 48 8b 88 ? ? ? ? 48 85 c9 74 ? 48 8b 01 ff 90 ? ? ? ? 83 3d
+/*
+	cshell_x64.dll+14B807E - 48 8B 05 13044F01     - mov rax,[cshell_x64.dll+29A8498] { (7FF8F19A07F0) }
+	shell_x64.dll+14B8085 - 48 8B 88 90000000     - mov rcx,[rax+00000090]
+	cshell_x64.dll+14B808C - 48 85 C9              - test rcx,rcx
+*/
+
+#define LOCAL_ENT					0x90
+
+//4c 8b 35 ? ? ? ? 48 89 4d
+//cshell_x64.dll + 12DC132 - 4C 8B 35 5FC36C01 - mov r14, [cshell_x64.dll + 29A8498] { (7FF8F19A07F0) }
+//cshell_x64.dll + 12DC139 - 48 89 4D A0 - mov[rbp - 60], rcx
+//cshell_x64.dll + 12DC13D - 41 0FB6 86 79020000 - movzx eax, byte ptr[r14 + 00000279]  ==> 0x279
+//cshell_x64.dll + 12DC145 - 4C 69 F8 C80D0000 - imul r15, rax, 00000DC8{ 3528 }
+
+#define LOCAL_ENT_INDEX				0x281
+
+//class CPlayer
+//{
+//public:
+//	union//0x0 // size 0xDC8
+//	{
+//		cLTObject* Object;
+//		HOBJECT* GetcObject;
+//	};
+//		char ClientID;			0x8
+//		char Team;				0x9
+//		char _Name[12];			0xA
+//		char pad_0x25[0x25]		0x25
+//		int PlayerSlotTeam;		0x2F
+//		int unkstruct1;			0x31
+//		bool Has_C4;			0x33
+//		int State;				0x34
+//		int Rank;				0x38
+//		int unkstruct2;			0x3C
+//		int unkstruct3;			0x40
+//		short HP;			0x44
+//		short Kills;			0x48
+//		__int32 Deaths;			0x4C
+//		__int32 HeadShots;		0x4E
+//		__int32 TeamID;			0x52
+//		__int32 Ping;			0x56
+//};

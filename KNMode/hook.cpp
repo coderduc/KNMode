@@ -42,14 +42,15 @@ typedef struct _NULL_MEMORY {
 	ULONG64 base_addr;
 	ULONGLONG sizeDll;
 	ULONG size;
-	ULONG newProtect;
+	DWORD newProtect;
+	DWORD oldProtect;
 }NULL_MEMORY;
 
 bool nullhook::call_kernel_function(void* kernel_function_address) {
 	if (!kernel_function_address)
 		return false;
 
-	PVOID* hookFunction = reinterpret_cast<PVOID*>(get_sys_module_export("\\SystemRoot\\System32\\drivers\\dxgkrnl.sys", "NtDxgkGetTrackedWorkloadStatistics"));
+	PVOID* hookFunction = reinterpret_cast<PVOID*>(get_sys_module_export("\\SystemRoot\\System32\\drivers\\dxgkrnl.sys", "NtOpenCompositionSurfaceSectionInfo")); //NtDxgkGetTrackedWorkloadStatistics
 	
 	if (!hookFunction) {
 		return false;
@@ -64,7 +65,8 @@ bool nullhook::call_kernel_function(void* kernel_function_address) {
 
 	BYTE shell_code_end[]
 	{
-		0xFF, 0xE0, // jmp rax
+		0xFF, 0xE0,
+		0xCC// jmp rax
 	};
 
 	RtlSecureZeroMemory(&original_func, sizeof(original_func));
@@ -136,19 +138,15 @@ NTSTATUS nullhook::hook_handler(PVOID calledParameter) {
 	}
 
 	if (instr->read) {
-		if (instr->addr < 0x7FFFFFFFFFFF && instr->addr > 0) {
-			read_kernel_memory(instr->pid, (PVOID)instr->addr, instr->buffer, instr->size);
-		}	
+		read_kernel_memory(instr->pid, (PVOID)instr->addr, instr->buffer, instr->size);
 	}
 
 	if (instr->write) {
-		if (instr->addr < 0x7FFFFFFFFFFF && instr->addr > 0) {
-			write_kernel_memory(instr->pid, instr->buffer, (PVOID)instr->addr, instr->size);
-		}
+		write_kernel_memory(instr->pid, instr->buffer, (PVOID)instr->addr, instr->size);
 	}
 
 	if (instr->changeProtect) {
-		ProtectVirtualMemory(instr->pid, (PVOID)instr->addr, instr->size, instr->newProtect);
+		instr->oldProtect = ProtectVirtualMemory(instr->pid, (PVOID)instr->addr, instr->size, instr->newProtect);
 	}
 
 	if (instr->draw_box) {
