@@ -548,3 +548,16 @@
 //		__int32 TeamID;			0x52
 //		__int32 Ping;			0x56
 //};
+
+
+//CFVN
+// 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4
+//cshell_x64.WebView::CFWebArgument::operator=+344E - 49 69 D5 2C080000     - imul rdx,r13,0000082C { 2092 }
+// 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4
+//cshell_x64.WebView::CFWebArgument::operator=+3455 - 48 8B 0D 3C9C6B02     - mov rcx,[cshell_x64.dll+27FA2D8] { (0) }
+//89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4
+//cshell_x64.WebView::CFWebArgument::operator=+345C - 89 84 0A DC070000     - mov [rdx+rcx+000007DC],eax
+//89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? ff 05
+//cshell_x64.WebView::CFWebArgument::operator=+349B - 89 84 0A E0070000     - mov [rdx+rcx+000007E0],eax
+//89 84 0a ? ? ? ? ff 05
+//cshell_x64.WebView::CFWebArgument::operator=+34DA - 89 84 0A E4070000     - mov [rdx+rcx+000007E4],eax
