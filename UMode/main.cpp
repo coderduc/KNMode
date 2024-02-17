@@ -1,4 +1,4 @@
-﻿#include "loadDrv.h"
+#include "loadDrv.h"
 
 typedef struct _NULL_MEMORY {
 	//r/w variables
@@ -51,7 +51,7 @@ wchar_t currentDir[MAX_PATH];
 StructDll crossfire;
 StructDll CShell_x64;
 StructDll ClientFx_x64;
-DWORD64 CLT_SHELL;
+uintptr_t CLT_SHELL;
 StructDll libcef;
 HWND hWnd = NULL;
 DWORD CheckPoint = NULL;
@@ -479,10 +479,100 @@ void SupportFunction() {
 	}
 }
 
-int main(void){
-	setup();
-	Sleep(1000);
-	
+void pressK() {
+	keybd_event(0x4B, 0x25, 0, 0);
+	keybd_event(0x4B, 0x25, KEYEVENTF_KEYUP, 0);
+}
+
+DWORD WINAPI NameEsp_Auto(LPVOID) {
+	while (1) {
+		Sleep(1);
+		CLT_SHELL = read<uintptr_t>(CShell_x64.baseAddr + LTShell);
+		if (!CLT_SHELL) continue;
+		signed meIndex = read<BYTE>(CLT_SHELL + LOCAL_ENT_INDEX);
+		if (meIndex == 255) continue;
+		Player localPlayer(GetPlayerByIndex(meIndex));
+		signed CheckTeam = localPlayer.getTeam();
+		if (InGame(CLT_SHELL)) {
+			if (localPlayer.getHealth() > 0) {
+				if ((GetAsyncKeyState(VK_LBUTTON) & 0x8000)) {
+					for (int i = 0; i < 32; i++) {
+						Player curP(GetPlayerByIndex(i));
+						if (i != meIndex)
+							curP.setTeam(2);
+					}
+					pressK();
+				}
+				else {
+					for (int i = 0; i < 32; i++) {
+						Player curP(GetPlayerByIndex(i));
+						if (i != meIndex)
+							curP.setTeam(CheckTeam);
+					}
+				}
+			}
+			else {
+				for (int i = 0; i < 32; i++) {
+					Player curP(GetPlayerByIndex(i));
+					if (i != meIndex)
+						curP.setTeam(CheckTeam);
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+DWORD WINAPI STW(LPVOID) {
+	vector<bool> ESE_default = { 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1 };
+	vector<bool> WS_default = { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
+	vector<bool> PS_default = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 };
+
+	bool isOnOnce = false;
+	bool isOffOnce = false;
+	while (1) {
+		Sleep(1);
+		CLT_SHELL = read<uintptr_t>(CShell_x64.baseAddr + LTShell);
+		if (InGame(CLT_SHELL)) {
+			//Turn on STW
+			if (!isOnOnce) {
+				Beep(500, 500);
+				uintptr_t WallPointer = read<uintptr_t>(CShell_x64.baseAddr + 0x27FA2D8);
+				for (int i = 0; i < 20; i++) {
+					write<bool>(WallPointer + (i * 0x82C) + 0x7DC, true);
+					write<bool>(WallPointer + (i * 0x82C) + 0x7E0, true);
+					write<bool>(WallPointer + (i * 0x82C) + 0x7E4, true);
+				}
+				isOnOnce = true;
+				isOffOnce = false;
+			}
+		}
+		else {
+			//Backup default value
+			if (!isOffOnce) {
+				Beep(300, 500);
+				uintptr_t WallPointer = read<uintptr_t>(CShell_x64.baseAddr + 0x27FA2D8);
+				for (int i = 0; i < 20; i++) {
+					write<bool>(WallPointer + (i * 0x82C) + 0x7DC, ESE_default[i]);
+					write<bool>(WallPointer + (i * 0x82C) + 0x7E0, WS_default[i]);
+					write<bool>(WallPointer + (i * 0x82C) + 0x7E4, PS_default[i]);
+				}
+				isOffOnce = true;
+				isOnOnce = false;
+			}
+		}
+	}
+	return 0;
+}
+
+
+#define msg(str) MessageBoxA(0, str, "Info", MB_OK);
+#define __CODERDUC__ int main(void)
+
+__CODERDUC__{
+	//setup();
+	//Sleep(1000);
+
 	if (!pid && !crossfire.baseAddr && !CShell_x64.baseAddr && !ClientFx_x64.baseAddr) {
 		pid = get_process_id(RGS("crossfire.dat"));
 		crossfire = get_module_base_addr(RGS("crossfire.dat"));
@@ -490,47 +580,56 @@ int main(void){
 		ClientFx_x64 = get_module_base_addr(RGS("ClientFx_x64.fxd"));
 	}
 	std::cout << R"(
-  ________    _____     ________.__  .__  __         .__                  
- /  _____/   /  |  |   /  _____/|  | |__|/  |_  ____ |  |__   ___________ 
+  ________    _____     ________.__  .__  __         .__
+ /  _____/   /  |  |   /  _____/|  | |__|/  |_  ____ |  |__   ___________
 /   \  ___  /   |  |_ /   \  ___|  | |  \   __\/ ___\|  |  \_/ __ \_  __ \
 \    \_\  \/    ^   / \    \_\  \  |_|  ||  | \  \___|   Y  \  ___/|  | \/
- \______  /\____   |   \______  /____/__||__|  \___  >___|  /\___  >__|   
-        \/      |__|          \/                   \/     \/     \/         
+ \______  /\____   |   \______  /____/__||__|  \___  >___|  /\___  >__|
+		\/      |__|          \/                   \/     \/     \/
 )" << '\n';
 	
-	//uintptr_t CharacterFuncBase = read<uintptr_t>(CShell_x64.baseAddr + dwCharacterFunc);
-	//for (int i = 0; i <= 511; i++) {
-	//	uintptr_t p1 = read<uintptr_t>(CharacterFuncBase + (i * 8));
-	//	uintptr_t p2 = read<uintptr_t>(p1 + 0x0);
-	//	uintptr_t p3 = read<uintptr_t>(p2 + 0x18);
-	//	uintptr_t p4 = read<uintptr_t>(p3 + 0x0);
-	//	write<int>(p4 + 0xD08, 3211522); //Mua Quat + Giam Choang + Giam Smoke: 3211522
-	//}
-	char name[12];
-	while (1) {
-		CLT_SHELL = read<uintptr_t>(CShell_x64.baseAddr + LTShell);
-		if (InGame(CLT_SHELL)) {
-			signed meIndex = read<BYTE>(CLT_SHELL + LOCAL_ENT_INDEX);
-			Player localPlayer(GetPlayerByIndex(meIndex));
-			localPlayer.getName(name, 12);
-			std::cout << name << endl;
-			/*for (int i = 0; i < 16; i++) {
-				Player curP(GetPlayerByIndex(i));
-				if(curP.getTeam() != curP.)
-			}*/
+	//CFO
+	//cshell_x64.WebView::CFWebArgument::operator=+344E - 49 69 D5 2C080000     - imul rdx,r13,0000082C { 2092 } ==> size
+
+	//cshell_x64.WebView::CFWebArgument::operator=+3455 - 48 8B 0D 9C348102     - mov rcx,[cshell_x64.dll+29A7958] { (0) }  => base
+
+	//cshell_x64.WebView::CFWebArgument::operator=+345C - 89 84 0A DC070000     - mov [rdx+rcx+000007DC],eax ==> EdgeShotEnabled
+
+	//cshell_x64.WebView::CFWebArgument::operator=+349B - 89 84 0A E0070000     - mov [rdx+rcx+000007E0],eax ==> Wallshot
+
+	//cshell_x64.WebView::CFWebArgument::operator=+34DA - 89 84 0A E4070000     - mov [rdx+rcx+000007E4],eax ==> PerfectShot
+
+	CreateThread(0, 0, NameEsp_Auto, 0, 0, 0);
+	CreateThread(0, 0, STW, 0, 0, 0);
+
+	while (true) {
+		HWND CF = FindWindowA(0, skCrypt("CROSSFIRE"));
+		if (CF) {
+			if ((GetAsyncKeyState(VK_DELETE) & 0x8000) && (GetAsyncKeyState(VK_CONTROL) & 0x8000)) {
+				Beep(300, 500);
+				exit(1);
+			}
+		}
+		else {
+			Beep(300, 500);
+			exit(0);
 		}
 		Sleep(1);
 	}
+	//CFVN
+	// 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4
+	//cshell_x64.WebView::CFWebArgument::operator=+344E - 49 69 D5 2C080000     - imul rdx,r13,0000082C { 2092 }
+	// 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4
+	//cshell_x64.WebView::CFWebArgument::operator=+3455 - 48 8B 0D 3C9C6B02     - mov rcx,[cshell_x64.dll+27FA2D8] { (0) }
+	//89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4
+	//cshell_x64.WebView::CFWebArgument::operator=+345C - 89 84 0A DC070000     - mov [rdx+rcx+000007DC],eax
+	//89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? ff 05
+	//cshell_x64.WebView::CFWebArgument::operator=+349B - 89 84 0A E0070000     - mov [rdx+rcx+000007E0],eax
+	//89 84 0a ? ? ? ? ff 05
+	//cshell_x64.WebView::CFWebArgument::operator=+34DA - 89 84 0A E4070000     - mov [rdx+rcx+000007E4],eax
 	
 
-	//CheckPoint = VK_F2;
-	//ReturnCheckPoint = VK_F3;
-	//SecondPerson = 'V';
-	//CopyRoomID = VK_F4;
-	//PasteRoomID = VK_F5;
-	//DrawCrosshair = VK_F6;
-	//SkillE = VK_SHIFT;
-	//SupportFunction();
+	
 
 	system(RGS("pause"));
 	return 0;
