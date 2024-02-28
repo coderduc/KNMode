@@ -568,18 +568,172 @@ DWORD WINAPI STW(LPVOID) {
 
 #define msg(str) MessageBoxA(0, str, "Info", MB_OK);
 #define __CODERDUC__ int main(void)
+#define log(name, addr) cout << left << setw(40) << name << "0x" << setw(10) << hex << uppercase << addr << endl;
+
+class FindPattern
+{
+public:
+	FindPattern(DWORD64 start, DWORD64 len, BYTE* pMask, char* szMask) : Base(0), Offset(0)
+	{
+		BYTE* data = new BYTE[len];
+		if (read_raw<BYTE>(start, data, len)) //ReadProcessMemory(pHandle, (LPVOID)start, data, len, &bytesMem)
+		{
+			for (DWORD i = 0; i < len; i++)
+			{
+				if (DataCompare((const BYTE*)(data + i), (const BYTE*)pMask, szMask))
+				{
+					Base = (DWORD64)(start + i);
+					Offset = i; 
+					break;
+				}
+			}
+		}
+		delete[] data;
+	}
+	static HANDLE pHandle;
+	DWORD64 Base;
+	DWORD Offset;
+private:
+	bool DataCompare(const BYTE* pData, const BYTE* pMask, const char* pszMask)
+	{
+		for (; *pszMask; ++pData, ++pMask, ++pszMask)
+		{
+			if (*pszMask == '0' && *pData != *pMask)
+				return false;
+		}
+		return (*pszMask == NULL);
+	}
+};
+
+bool isgetaddress = false;
+
+bool Prepare() {
+	if (!isgetaddress) {
+		DWORD64 InGameStatus = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x8b\x15\x00\x00\x00\x00\xff\x90\x00\x00\x00\x00\xf6\x05", "00????00????00").Base;
+		if (InGameStatus) {
+			DWORD offset = read<DWORD>(InGameStatus + 0x2);
+		    InGameStatus = InGameStatus + offset + 0x6;
+			InGameStatus -= CShell_x64.baseAddr;
+			log("dwInGameStatus", InGameStatus);
+		}
+
+		DWORD64 NoBugDamage = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8d\x15\x00\x00\x00\x00\x48\x8d\x4c\x24\x00\xe8\x00\x00\x00\x00\x4c\x8d\x44\x24\x00\xba\x00\x00\x00\x00\x48\x8d\x8f", "000????0000?0????0000?0????000").Base;
+		if (NoBugDamage) {
+			DWORD offset = read<DWORD>(NoBugDamage + 0x3);
+			NoBugDamage = NoBugDamage + offset + 0x7;
+			NoBugDamage -= CShell_x64.baseAddr;
+			log("dwNoBugDamage", NoBugDamage);
+		}
+
+		DWORD64 NoRecoil = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x80\xBF\x00\x00\x00\x00\x00\x99\x99\xBF\x00\x00\x00\x00\x80\x8A\x00\x00\x00\x00\x00\xBF\x00\x00\x00\x00", "0000?????000????00?????0????").Base;
+		if (NoRecoil) {
+			NoRecoil -= CShell_x64.baseAddr;
+			log("dwNoRecoil", NoRecoil);
+		}
+
+		
+		DWORD64 ThirdPerson_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x00\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x43\x00\x00", "????00000000?0000000000000").Base;
+		if (ThirdPerson_Base) {
+			ThirdPerson_Base -= CShell_x64.baseAddr;
+			log("dwThirdPerson_Base", ThirdPerson_Base);
+		}
+		
+		DWORD64 ThirdPerson_Offset = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x8B\x83\x00\x00\x00\x00\x48\x83\xC4\x00\x5B\xC3\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\x48\x89\x5C\x24\x00", "00????000?0000000000000000?").Base;
+		if (ThirdPerson_Offset) {
+			ThirdPerson_Offset = read<DWORD>(ThirdPerson_Offset + 0x2);
+			log("dwThirdPerson_Offset", ThirdPerson_Offset);
+		}
+
+		DWORD64 Coordinate_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\x44\x0f\x29\x5c\x24", "000????00000").Base;
+		if (Coordinate_Base) {
+			DWORD offset = read<DWORD>(Coordinate_Base + 0x3);
+			Coordinate_Base = Coordinate_Base + offset + 0x7;
+			Coordinate_Base -= CShell_x64.baseAddr;
+			log("dwCoordinate_Base", Coordinate_Base);
+		}
+
+		DWORD64 Coordinate_Offset1 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\xb0\x00\x00\x00\x00\xc6\x41", "000????00").Base;
+		if (Coordinate_Offset1) {
+			Coordinate_Offset1 = read<DWORD>(Coordinate_Offset1 + 0x3);
+			log("dwCoordinate_Offset1", Coordinate_Offset1);
+		}
+
+		DWORD64 Coordinate_Offset2 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x4c\x8b\xb6\x00\x00\x00\x00\x48\x8b\x18", "000????000").Base;
+		if (Coordinate_Offset2) {
+			Coordinate_Offset2 = read<DWORD>(Coordinate_Offset2 + 0x3);
+			log("dwCoordinate_Offset2", Coordinate_Offset2);
+		}
+
+		DWORD64 Coordinate_Offset3 = FindPattern::FindPattern((DWORD64)crossfire.baseAddr, (DWORD64)crossfire.sizeDll, (PBYTE)"\xf3\x44\x0f\x10\x8f\x00\x00\x00\x00\x41\x0f\x28\xfa", "00000????0000").Base;
+		if (Coordinate_Offset3) {
+			Coordinate_Offset3 = read<DWORD>(Coordinate_Offset3 + 0x5);
+			log("dwCoordinate_Offset3", Coordinate_Offset3);
+		}
+		
+		DWORD64 CharacterFunc = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x15\x00\x00\x00\x00\x48\x23\x0d", "000????000").Base;
+		if (CharacterFunc) {
+			DWORD offset = read<DWORD>(CharacterFunc + 0x3);
+			CharacterFunc = CharacterFunc + offset + 0x7;
+			CharacterFunc -= CShell_x64.baseAddr;
+			log("dwCharacterFunc", CharacterFunc);
+		}
+
+		DWORD64 CFTTable = FindPattern::FindPattern((DWORD64)crossfire.baseAddr, (DWORD64)crossfire.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\x48\x85\xc0\x75\x00\xb9\x00\x00\x00\x00\xe8\x00\x00\x00\x00\x45\x33\xc0", "000????0000?0????0????000").Base;
+		if (CFTTable) {
+			DWORD offset = read<DWORD>(CFTTable + 0x3);
+			CFTTable = CFTTable + offset + 0x7;
+			CFTTable -= crossfire.baseAddr;
+			log("dwCFTTable", CFTTable);
+		}
+
+		DWORD64 dwLTShell = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\xba\x00\x00\x00\x00\x48\x8b\x88\x00\x00\x00\x00\x48\x8b\x01\xff\x90\x00\x00\x00\x00\x40\x0f\xb6\xd7", "000????0????000????00000????0000").Base;
+		if (dwLTShell) {
+			DWORD offset = read<DWORD>(dwLTShell + 0x3);
+			dwLTShell = dwLTShell + offset + 0x7;
+			dwLTShell -= CShell_x64.baseAddr;
+			log("dwLTShell", dwLTShell);
+		}
+
+		DWORD64 dwENT_BEGIN = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x4c\x8b\xbc\x39\x00\x00\x00\x00\x48\x85\xc0", "0000????000").Base;
+		if (dwENT_BEGIN) {
+			dwENT_BEGIN = read<DWORD>(dwENT_BEGIN + 0x4);
+			log("dwENT_BEGIN", dwENT_BEGIN);
+		}
+
+		DWORD64 dwENT_SIZE = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x69\xc8\x00\x00\x00\x00\x0f\x29\xb4\x24\x00\x00\x00\x00\x48\x8b\x05", "000????0000????000").Base;
+		if (dwENT_SIZE) {
+			dwENT_SIZE = read<DWORD>(dwENT_SIZE + 0x3);
+			log("dwENT_SIZE", dwENT_SIZE);
+		}
+
+		DWORD64 dwLOCAL_ENT_INDEX = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x41\x0f\xb6\x86\x00\x00\x00\x00\x4c\x69\xf8", "0000????000").Base;
+		if (dwLOCAL_ENT_INDEX) {
+			dwLOCAL_ENT_INDEX = read<DWORD>(dwLOCAL_ENT_INDEX + 0x4);
+			log("dwLOCAL_ENT_INDEX", dwLOCAL_ENT_INDEX);
+		}
+		
+		DWORD64 FastGun = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x7a\x00\x00\x00\x7f", "000?000").Base;
+		if (FastGun) {
+			FastGun -= CShell_x64.baseAddr;
+			log("dwFastGun", FastGun);
+		}
+
+		isgetaddress = true;
+	}
+	return 1;
+}
 
 __CODERDUC__{
-	//setup();
-	//Sleep(1000);
+	setup();
+	Sleep(1000);
 
 	if (!pid && !crossfire.baseAddr && !CShell_x64.baseAddr && !ClientFx_x64.baseAddr) {
-		pid = get_process_id(RGS("crossfire.dat"));
-		crossfire = get_module_base_addr(RGS("crossfire.dat"));
+		pid = get_process_id(RGS("crossfire.exe"));
+		crossfire = get_module_base_addr(RGS("crossfire.exe"));
 		CShell_x64 = get_module_base_addr(RGS("cshell_x64.dll"));
 		ClientFx_x64 = get_module_base_addr(RGS("ClientFx_x64.fxd"));
 	}
-	std::cout << R"(
+	std::cout << R"( 
   ________    _____     ________.__  .__  __         .__
  /  _____/   /  |  |   /  _____/|  | |__|/  |_  ____ |  |__   ___________
 /   \  ___  /   |  |_ /   \  ___|  | |  \   __\/ ___\|  |  \_/ __ \_  __ \
@@ -587,49 +741,35 @@ __CODERDUC__{
  \______  /\____   |   \______  /____/__||__|  \___  >___|  /\___  >__|
 		\/      |__|          \/                   \/     \/     \/
 )" << '\n';
-	
-	//CFO
-	//cshell_x64.WebView::CFWebArgument::operator=+344E - 49 69 D5 2C080000     - imul rdx,r13,0000082C { 2092 } ==> size
+	Prepare();
+	//char Define[50];
+	//uintptr_t tCFTTable = read<uintptr_t>(crossfire.baseAddr + /*0xF569C0*/0x10B2AE0);
+	//uintptr_t tDefineCFT = read<uintptr_t>(tCFTTable + 0x8);
+	//uintptr_t lList = read<uintptr_t>(tDefineCFT + 0x10);
+	//for (int i = 0; i < 34; i++) {
+	//	uintptr_t rowData = read<uintptr_t>(lList + (i * 8));
+	//	int _Enable = read<int>(rowData + 0x30);
+	//	if (i == 22 || i == 2 || i == 3 || i == 6 || i == 18 || i == 0) {
+	//		write<int>(rowData + 0x30, 0);
+	//	}
+	//	if (i == 10 || i == 14 || i == 15 || i == 16) {
+	//		write<int>(rowData + 0x30, 0);
+	//	}
+	//	read_raw<char>(rowData + 0x10, Define, 50);
+	//	if ((Define[0] != 'U') || (Define[0] != 'E')) {
+	//		read_raw<char>(read<uintptr_t>(rowData + 0x10) + 0x0, Define, 50);
+	//	}
+	//	cout << i << "\t" << Define << "\t\t" << _Enable << endl;
+	//}
 
-	//cshell_x64.WebView::CFWebArgument::operator=+3455 - 48 8B 0D 9C348102     - mov rcx,[cshell_x64.dll+29A7958] { (0) }  => base
-
-	//cshell_x64.WebView::CFWebArgument::operator=+345C - 89 84 0A DC070000     - mov [rdx+rcx+000007DC],eax ==> EdgeShotEnabled
-
-	//cshell_x64.WebView::CFWebArgument::operator=+349B - 89 84 0A E0070000     - mov [rdx+rcx+000007E0],eax ==> Wallshot
-
-	//cshell_x64.WebView::CFWebArgument::operator=+34DA - 89 84 0A E4070000     - mov [rdx+rcx+000007E4],eax ==> PerfectShot
-
-	CreateThread(0, 0, NameEsp_Auto, 0, 0, 0);
-	CreateThread(0, 0, STW, 0, 0, 0);
-
-	while (true) {
-		HWND CF = FindWindowA(0, skCrypt("CROSSFIRE"));
-		if (CF) {
-			if ((GetAsyncKeyState(VK_DELETE) & 0x8000) && (GetAsyncKeyState(VK_CONTROL) & 0x8000)) {
-				Beep(300, 500);
-				exit(1);
-			}
-		}
-		else {
-			Beep(300, 500);
-			exit(0);
-		}
-		Sleep(1);
-	}
-	//CFVN
-	// 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4
-	//cshell_x64.WebView::CFWebArgument::operator=+344E - 49 69 D5 2C080000     - imul rdx,r13,0000082C { 2092 }
-	// 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4
-	//cshell_x64.WebView::CFWebArgument::operator=+3455 - 48 8B 0D 3C9C6B02     - mov rcx,[cshell_x64.dll+27FA2D8] { (0) }
-	//89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4
-	//cshell_x64.WebView::CFWebArgument::operator=+345C - 89 84 0A DC070000     - mov [rdx+rcx+000007DC],eax
-	//89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? ff 05
-	//cshell_x64.WebView::CFWebArgument::operator=+349B - 89 84 0A E0070000     - mov [rdx+rcx+000007E0],eax
-	//89 84 0a ? ? ? ? ff 05
-	//cshell_x64.WebView::CFWebArgument::operator=+34DA - 89 84 0A E4070000     - mov [rdx+rcx+000007E4],eax
-	
-
-	
+	/*uintptr_t CFTTableManager = read<uintptr_t>(crossfire.baseAddr + 0x10B2AE0);
+	uintptr_t WeaponBanTable = read<uintptr_t>(CFTTableManager + 0x628);
+	uintptr_t listData = read<uintptr_t>(WeaponBanTable + 0x10);
+	for (int i = 0; i < 15; i++) {
+		uintptr_t rowData = read<uintptr_t>(listData + (i * 8));
+		int weaponIndexChangeTo = read<int>(rowData + 0x80);
+		cout << i << "\t\t" << weaponIndexChangeTo << endl;
+	}*/
 
 	system(RGS("pause"));
 	return 0;
