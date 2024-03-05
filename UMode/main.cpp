@@ -247,86 +247,31 @@ bool draw_text(int x, int y, LPCSTR string, UINT len) {
 
 //Game Function
 void NoBugDamage() {
-	changeProtection(pid,CShell_x64.baseAddr + dwNoBugDamage, 19, PAGE_EXECUTE_READWRITE);
+	changeProtection(pid,CShell_x64.baseAddr + nv.NoBugDamage, 19, PAGE_EXECUTE_READWRITE);
 	BYTE writeBuffer[] = { 0x72,0x65,0x7A,0x5C,0x42,0x75,0x74,0x65,0x73,0x5C,0x42,0x46,0x30,0x33,0x35 };
-	writeBytes(CShell_x64.baseAddr + dwNoBugDamage, &writeBuffer, sizeof(writeBuffer));
-	changeProtection(pid, CShell_x64.baseAddr + dwNoBugDamage, 19, 0);
-}
-
-void NoFlash() {
-	BYTE bytes[] = { 0x49,0x6d,0x70,0x6f,0x55,0x49,0x2f,0x4e,0x6f,0x69,0x73,0x65,0x53,0x63,0x72,0x65,0x65,0x6e,0x2f,0x4e,0x6f,0x69,0x73,0x65,0x46,0x69,0x6c,0x74,0x65,0x72,0x2e,0x64,0x74,0x78 };
-	changeProtection(pid, CShell_x64.baseAddr + dwNoFlash1, 34, PAGE_EXECUTE_READWRITE);
-	changeProtection(pid, CShell_x64.baseAddr + dwNoFlash2, 34, PAGE_EXECUTE_READWRITE);
-	writeBytes(CShell_x64.baseAddr + dwNoFlash1, &bytes, sizeof(bytes));
-	writeBytes(CShell_x64.baseAddr + dwNoFlash2, &bytes, sizeof(bytes));
-	changeProtection(pid, CShell_x64.baseAddr + dwNoFlash1, 34, 0);
-	changeProtection(pid, CShell_x64.baseAddr + dwNoFlash2, 34, 0);
-}
-
-void NoFallDamage() {
-	uintptr_t base = read<uintptr_t>(CShell_x64.baseAddr + dwNoFallDamage);
-	write<float>(base + dwNoFallDamageOffset, 0.0f);
-}
-
-class Player {
-public:
-	DWORD64 baseEntity;
-
-	Player(DWORD64 baseEnt) {
-		baseEntity = baseEnt;
-	}
-
-	void getName(char* buffer, size_t len) {
-		read_raw<char>(baseEntity + 0xA, buffer, len); //Name
-	}
-
-	signed getTeam() {
-		return read<BYTE>(baseEntity + 0x9); // Team
-	}
-
-	int getHealth() {
-		return read<int>(baseEntity + 0x44); // Health
-	}
-
-	int getKill() {
-		return read<int>(baseEntity + 0x48); //Kill
-	}
-
-	void setTeam(BYTE id) {
-		write<BYTE>(baseEntity + 0x9, id);
-	}
-};
-
-DWORD64 GetPlayerByIndex(int i) {
-	return ((CLT_SHELL + ENT_BEGIN + (i * ENT_SIZE)));
-}
-
-bool InGame(DWORD64 clt) {
-	return clt && read<BYTE>(clt + LOCAL_ENT);
+	writeBytes(CShell_x64.baseAddr + nv.NoBugDamage, &writeBuffer, sizeof(writeBuffer));
+	changeProtection(pid, CShell_x64.baseAddr + nv.NoBugDamage, 19, 0);
 }
 
 void SupportFunction() {
 	float oldx = 0, oldy = 0, oldz = 0;
 	bool isSecondPerson = false;
 	bool isNC_NR = false;
-	bool isDrawCrosshair = false;
-	bool isAimbot = false;
-	bool isBPOn = false;
 	int roomid = 0;
 
-	uintptr_t thirdPerson_Base = read<uintptr_t>(CShell_x64.baseAddr + dwThirdPerson_Base);
-	uintptr_t copyRoom_base = read<uintptr_t>(CShell_x64.baseAddr + dwCopyRoomBase);
-	uintptr_t copyRoom_base1 = read<uintptr_t>(copyRoom_base + dwCopyRoom_Offset1);
+	uintptr_t thirdPerson_Base = read<uintptr_t>(CShell_x64.baseAddr + nv.ThirdPerson_Base);
+	uintptr_t copyRoom_base = read<uintptr_t>(CShell_x64.baseAddr + nv.CopyRoomBase);
+	uintptr_t copyRoom_base1 = read<uintptr_t>(copyRoom_base + nv.CopyRoomOffset1);
 	while (true) {
-		int inGameStatus = read<int>(CShell_x64.baseAddr + dwinGameStatus);
+		int inGameStatus = read<int>(CShell_x64.baseAddr + nv.InGameStatus);
 		if (SkillE) {
 			//Skill E
 			if (GetAsyncKeyState(SkillE) & 1) {
 				if (inGameStatus == 0xB) {
-					uintptr_t skillE_Base = read<uintptr_t>(CShell_x64.baseAddr + dwSkillE_Base);
-					int skillE_read = read<int>(skillE_Base + dwSkillE_Offset);
+					uintptr_t skillE_Base = read<uintptr_t>(CShell_x64.baseAddr + nv.SkillE_Base);
+					int skillE_read = read<int>(skillE_Base + nv.SkillE_Offset);
 					if (skillE_read == 2) {
-						write<int>(skillE_Base + dwSkillE_Offset, 0);
+						write<int>(skillE_Base + nv.SkillE_Offset, 0);
 					}
 				}
 			}
@@ -336,13 +281,14 @@ void SupportFunction() {
 		if (CheckPoint) {
 			//Checkpoint
 			if (GetAsyncKeyState(CheckPoint) & 1) {
-				if (inGameStatus == 0xB) {
+				if (inGameStatus == 11) {
 					Beep(500, 300);
-					uintptr_t coordinate_base = read<uintptr_t>(CShell_x64.baseAddr + dwCoordinate_Base);
-					uintptr_t base = read<uintptr_t>(coordinate_base + dwCoordinate_Offset1);
-					oldy = read<float>(base + dwCoordinate_Offset2 - 0x4);
-					oldz = read<float>(base + dwCoordinate_Offset2);
-					oldx = read<float>(base + dwCoordinate_Offset2 + 0x4);
+					uintptr_t coordinate_base = read<uintptr_t>(CShell_x64.baseAddr + nv.Coordinate_Base);
+					uintptr_t base = read<uintptr_t>(coordinate_base + nv.Coordinate_Offset1);
+					base = read<uintptr_t>(base + nv.Coordinate_Offset2);
+					oldy = read<float>(base + nv.Coordinate_Offset3 - 0x4);
+					oldz = read<float>(base + nv.Coordinate_Offset3);
+					oldx = read<float>(base + nv.Coordinate_Offset3 + 0x4);
 				}
 			}
 		}
@@ -350,13 +296,14 @@ void SupportFunction() {
 		if (ReturnCheckPoint) {
 			//Go to the last checkpoint
 			if (GetAsyncKeyState(ReturnCheckPoint) & 1) {
-				if (inGameStatus == 0xB) {
+				if (inGameStatus == 11) {
 					Beep(300, 300);
-					uintptr_t coordinate_base = read<uintptr_t>(CShell_x64.baseAddr + dwCoordinate_Base);
-					uintptr_t base = read<uintptr_t>(coordinate_base + dwCoordinate_Offset1);
-					write<float>(base + dwCoordinate_Offset2 - 0x4, oldy);
-					write<float>(base + dwCoordinate_Offset2, oldz);
-					write<float>(base + dwCoordinate_Offset2 + 0x4, oldx);
+					uintptr_t coordinate_base = read<uintptr_t>(CShell_x64.baseAddr + nv.Coordinate_Base);
+					uintptr_t base = read<uintptr_t>(coordinate_base + nv.Coordinate_Offset1);
+					base = read<uintptr_t>(base + nv.Coordinate_Offset2);
+					write<float>(base + nv.Coordinate_Offset3 - 0x4, oldy);
+					write<float>(base + nv.Coordinate_Offset3, oldz);
+					write<float>(base + nv.Coordinate_Offset3 + 0x4, oldx);
 				}
 			}
 		}
@@ -366,10 +313,10 @@ void SupportFunction() {
 			if (GetAsyncKeyState(ThirdPerson) & 1) {
 				isSecondPerson = !isSecondPerson;
 				if (isSecondPerson) {
-					write<int>(thirdPerson_Base + dwThirdPerson_Offset, 3);
+					write<int>(thirdPerson_Base + nv.ThirdPerson_Offset, 3);
 				}
 				else {
-					write<int>(thirdPerson_Base + dwThirdPerson_Offset, 1);
+					write<int>(thirdPerson_Base + nv.ThirdPerson_Offset, 1);
 				}
 			}
 		}
@@ -379,10 +326,10 @@ void SupportFunction() {
 			if (GetAsyncKeyState(SecondPerson) & 1) {
 				isSecondPerson = !isSecondPerson;
 				if (isSecondPerson) {
-					write<int>(thirdPerson_Base + dwThirdPerson_Offset, 2);
+					write<int>(thirdPerson_Base + nv.ThirdPerson_Offset, 2);
 				}
 				else {
-					write<int>(thirdPerson_Base + dwThirdPerson_Offset, 1);
+					write<int>(thirdPerson_Base + nv.ThirdPerson_Offset, 1);
 				}
 			}
 		}
@@ -391,7 +338,7 @@ void SupportFunction() {
 			//Copy room ID
 			if (GetAsyncKeyState(CopyRoomID) & 1) {
 				Beep(500, 300);
-				roomid = read<int>(copyRoom_base1 + dwCopyRoom_Offset2);
+				roomid = read<int>(copyRoom_base1 + nv.CopyRoomOffset2);
 			}
 		}
 		
@@ -400,7 +347,7 @@ void SupportFunction() {
 			if (GetAsyncKeyState(PasteRoomID) & 1) {
 				Beep(300, 300);
 				if (roomid != 0) {
-					write<int>(copyRoom_base1 + dwCopyRoom_Offset2, roomid);
+					write<int>(copyRoom_base1 + nv.CopyRoomOffset2, roomid);
 				}
 			}
 		}
@@ -408,74 +355,17 @@ void SupportFunction() {
 		
 		if (inGameStatus == 11) {
 			if (GetAsyncKeyState(VK_LBUTTON)) {
-				DWORD oldProt = changeProtection(pid, CShell_x64.baseAddr + dwNoRecoil, 1, PAGE_EXECUTE_READWRITE);
-				write<float>(CShell_x64.baseAddr + dwNoRecoil, 0.0f);
-				changeProtection(pid, CShell_x64.baseAddr + dwNoRecoil, 1, oldProt);
+				DWORD oldProt = changeProtection(pid, CShell_x64.baseAddr + nv.NoRecoil, 1, PAGE_EXECUTE_READWRITE);
+				write<float>(CShell_x64.baseAddr + nv.NoRecoil, 0.0f);
+				changeProtection(pid, CShell_x64.baseAddr + nv.NoRecoil, 1, oldProt);
 			}
 			else {
-				DWORD oldProt = changeProtection(pid, CShell_x64.baseAddr + dwNoRecoil, 1, PAGE_EXECUTE_READWRITE);
-				write<float>(CShell_x64.baseAddr + dwNoRecoil, -1.0f);
-				changeProtection(pid, CShell_x64.baseAddr + dwNoRecoil, 1, oldProt);
-			}
-		}
-
-		if (DrawCrosshair) {
-			//Draw crosshair
-			if (GetAsyncKeyState(DrawCrosshair) & 1) {
-				Beep(300, 500);
-				isDrawCrosshair = !isDrawCrosshair;
-			}
-			if (isDrawCrosshair) {
-				int width = 0, height = 0;
-				RECT rect;
-				if (GetWindowRect(FindWindowA(0, RGS("CROSSFIRE")), &rect))
-				{
-					width = rect.right - rect.left;
-					height = rect.bottom - rect.top;
-				}
-				draw_box(width / 2,  height / 2, 3, 3, 3, 255, 0, 0);
+				DWORD oldProt = changeProtection(pid, CShell_x64.baseAddr + nv.NoRecoil, 1, PAGE_EXECUTE_READWRITE);
+				write<float>(CShell_x64.baseAddr + nv.NoRecoil, -1.0f);
+				changeProtection(pid, CShell_x64.baseAddr + nv.NoRecoil, 1, oldProt);
 			}
 		}
 		NoBugDamage();
-
-		CLT_SHELL = read<uintptr_t>(CShell_x64.baseAddr + LTShell);
-		if (InGame(CLT_SHELL)) {
-			signed meIndex = read<BYTE>(CLT_SHELL + LOCAL_ENT_INDEX);
-			Player localPlayer(GetPlayerByIndex(meIndex));
-			if (localPlayer.getTeam() == 0) {
-				if (GetAsyncKeyState(VK_XBUTTON1)) {
-					for (int i = 0; i < 17; i++) {
-						Player curP(GetPlayerByIndex(i));
-						if (meIndex == i) continue;
-						curP.setTeam(0);
-					}
-				}
-				else {
-					for (int i = 0; i < 17; i++) {
-						Player curP(GetPlayerByIndex(i));
-						if (meIndex == i) continue;
-						curP.setTeam(1);
-					}
-				}
-			}
-			else {
-				if (GetAsyncKeyState(VK_XBUTTON1)) {
-					for (int i = 0; i < 17; i++) {
-						Player curP(GetPlayerByIndex(i));
-						if (meIndex == i) continue;
-						curP.setTeam(1);
-					}
-				}
-				else {
-					for (int i = 0; i < 17; i++) {
-						Player curP(GetPlayerByIndex(i));
-						if (meIndex == i) continue;
-						curP.setTeam(0);
-					}
-				}
-			}
-		}
-		std::this_thread::sleep_for(std::chrono::microseconds(1));
 	}
 }
 
@@ -484,91 +374,18 @@ void pressK() {
 	keybd_event(0x4B, 0x25, KEYEVENTF_KEYUP, 0);
 }
 
-DWORD WINAPI NameEsp_Auto(LPVOID) {
-	while (1) {
-		Sleep(1);
-		CLT_SHELL = read<uintptr_t>(CShell_x64.baseAddr + LTShell);
-		if (!CLT_SHELL) continue;
-		signed meIndex = read<BYTE>(CLT_SHELL + LOCAL_ENT_INDEX);
-		if (meIndex == 255) continue;
-		Player localPlayer(GetPlayerByIndex(meIndex));
-		signed CheckTeam = localPlayer.getTeam();
-		if (InGame(CLT_SHELL)) {
-			if (localPlayer.getHealth() > 0) {
-				if ((GetAsyncKeyState(VK_LBUTTON) & 0x8000)) {
-					for (int i = 0; i < 32; i++) {
-						Player curP(GetPlayerByIndex(i));
-						if (i != meIndex)
-							curP.setTeam(2);
-					}
-					pressK();
-				}
-				else {
-					for (int i = 0; i < 32; i++) {
-						Player curP(GetPlayerByIndex(i));
-						if (i != meIndex)
-							curP.setTeam(CheckTeam);
-					}
-				}
-			}
-			else {
-				for (int i = 0; i < 32; i++) {
-					Player curP(GetPlayerByIndex(i));
-					if (i != meIndex)
-						curP.setTeam(CheckTeam);
-				}
-			}
-		}
-	}
-	return 0;
-}
-
-DWORD WINAPI STW(LPVOID) {
-	vector<bool> ESE_default = { 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1 };
-	vector<bool> WS_default = { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
-	vector<bool> PS_default = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 };
-
-	bool isOnOnce = false;
-	bool isOffOnce = false;
-	while (1) {
-		Sleep(1);
-		CLT_SHELL = read<uintptr_t>(CShell_x64.baseAddr + LTShell);
-		if (InGame(CLT_SHELL)) {
-			//Turn on STW
-			if (!isOnOnce) {
-				Beep(500, 500);
-				uintptr_t WallPointer = read<uintptr_t>(CShell_x64.baseAddr + 0x27FA2D8);
-				for (int i = 0; i < 20; i++) {
-					write<bool>(WallPointer + (i * 0x82C) + 0x7DC, true);
-					write<bool>(WallPointer + (i * 0x82C) + 0x7E0, true);
-					write<bool>(WallPointer + (i * 0x82C) + 0x7E4, true);
-				}
-				isOnOnce = true;
-				isOffOnce = false;
-			}
-		}
-		else {
-			//Backup default value
-			if (!isOffOnce) {
-				Beep(300, 500);
-				uintptr_t WallPointer = read<uintptr_t>(CShell_x64.baseAddr + 0x27FA2D8);
-				for (int i = 0; i < 20; i++) {
-					write<bool>(WallPointer + (i * 0x82C) + 0x7DC, ESE_default[i]);
-					write<bool>(WallPointer + (i * 0x82C) + 0x7E0, WS_default[i]);
-					write<bool>(WallPointer + (i * 0x82C) + 0x7E4, PS_default[i]);
-				}
-				isOffOnce = true;
-				isOnOnce = false;
-			}
-		}
-	}
-	return 0;
-}
-
-
 #define msg(str) MessageBoxA(0, str, "Info", MB_OK);
 #define __CODERDUC__ int main(void)
-#define log(name, addr) cout << left << setw(40) << name << "0x" << setw(10) << hex << uppercase << addr << endl;
+//#define LOGGER //Uncomment this to use address logger
+
+#ifdef LOGGER
+	#define log(name, addr) cout << left << setw(40) << name << "0x" << setw(10) << hex << uppercase << addr << endl;
+#else
+	#define log(name, addr)
+#endif // DEBUG
+
+
+
 
 class FindPattern
 {
@@ -576,7 +393,7 @@ public:
 	FindPattern(DWORD64 start, DWORD64 len, BYTE* pMask, char* szMask) : Base(0), Offset(0)
 	{
 		BYTE* data = new BYTE[len];
-		if (read_raw<BYTE>(start, data, len)) //ReadProcessMemory(pHandle, (LPVOID)start, data, len, &bytesMem)
+		if (read_raw<BYTE>(start, data, len))
 		{
 			for (DWORD i = 0; i < len; i++)
 			{
@@ -609,115 +426,147 @@ bool isgetaddress = false;
 
 bool Prepare() {
 	if (!isgetaddress) {
-		DWORD64 InGameStatus = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x8b\x15\x00\x00\x00\x00\xff\x90\x00\x00\x00\x00\xf6\x05", "00????00????00").Base;
-		if (InGameStatus) {
-			DWORD offset = read<DWORD>(InGameStatus + 0x2);
-		    InGameStatus = InGameStatus + offset + 0x6;
-			InGameStatus -= CShell_x64.baseAddr;
-			log("dwInGameStatus", InGameStatus);
+		nv.InGameStatus = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x8b\x15\x00\x00\x00\x00\xff\x90\x00\x00\x00\x00\xf6\x05", "00????00????00").Base;
+		if (nv.InGameStatus) {
+			DWORD offset = read<DWORD>(nv.InGameStatus + 0x2);
+			nv.InGameStatus = nv.InGameStatus + offset + 0x6;
+			nv.InGameStatus -= CShell_x64.baseAddr;
+			log(RGS("dwInGameStatus"), nv.InGameStatus);
 		}
 
-		DWORD64 NoBugDamage = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8d\x15\x00\x00\x00\x00\x48\x8d\x4c\x24\x00\xe8\x00\x00\x00\x00\x4c\x8d\x44\x24\x00\xba\x00\x00\x00\x00\x48\x8d\x8f", "000????0000?0????0000?0????000").Base;
-		if (NoBugDamage) {
-			DWORD offset = read<DWORD>(NoBugDamage + 0x3);
-			NoBugDamage = NoBugDamage + offset + 0x7;
-			NoBugDamage -= CShell_x64.baseAddr;
-			log("dwNoBugDamage", NoBugDamage);
+		nv.NoBugDamage = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8d\x15\x00\x00\x00\x00\x48\x8d\x4c\x24\x00\xe8\x00\x00\x00\x00\x4c\x8d\x44\x24\x00\xba\x00\x00\x00\x00\x48\x8d\x8f", "000????0000?0????0000?0????000").Base;
+		if (nv.NoBugDamage) {
+			DWORD offset = read<DWORD>(nv.NoBugDamage + 0x3);
+			nv.NoBugDamage = nv.NoBugDamage + offset + 0x7;
+			nv.NoBugDamage -= CShell_x64.baseAddr;
+			log(RGS("dwNoBugDamage"), nv.NoBugDamage);
 		}
 
-		DWORD64 NoRecoil = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x80\xBF\x00\x00\x00\x00\x00\x99\x99\xBF\x00\x00\x00\x00\x80\x8A\x00\x00\x00\x00\x00\xBF\x00\x00\x00\x00", "0000?????000????00?????0????").Base;
-		if (NoRecoil) {
-			NoRecoil -= CShell_x64.baseAddr;
-			log("dwNoRecoil", NoRecoil);
+		nv.NoRecoil = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x80\xBF\x00\x00\x00\x00\x00\x99\x99\xBF\x00\x00\x00\x00\x80\x8A\x00\x00\x00\x00\x00\xBF\x00\x00\x00\x00", "0000?????000????00?????0????").Base;
+		if (nv.NoRecoil) {
+			nv.NoRecoil -= CShell_x64.baseAddr;
+			log(RGS("dwNoRecoil"), nv.NoRecoil);
 		}
 
 		
-		DWORD64 ThirdPerson_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x00\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x43\x00\x00", "????00000000?0000000000000").Base;
-		if (ThirdPerson_Base) {
-			ThirdPerson_Base -= CShell_x64.baseAddr;
-			log("dwThirdPerson_Base", ThirdPerson_Base);
+		nv.ThirdPerson_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x00\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x43\x00\x00", "????00000000?0000000000000").Base;
+		if (nv.ThirdPerson_Base) {
+			nv.ThirdPerson_Base -= CShell_x64.baseAddr;
+			log(RGS("dwThirdPerson_Base"), nv.ThirdPerson_Base);
 		}
 		
-		DWORD64 ThirdPerson_Offset = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x8B\x83\x00\x00\x00\x00\x48\x83\xC4\x00\x5B\xC3\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\x48\x89\x5C\x24\x00", "00????000?0000000000000000?").Base;
-		if (ThirdPerson_Offset) {
-			ThirdPerson_Offset = read<DWORD>(ThirdPerson_Offset + 0x2);
-			log("dwThirdPerson_Offset", ThirdPerson_Offset);
+		nv.ThirdPerson_Offset = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x8B\x83\x00\x00\x00\x00\x48\x83\xC4\x00\x5B\xC3\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\x48\x89\x5C\x24\x00", "00????000?0000000000000000?").Base;
+		if (nv.ThirdPerson_Offset) {
+			nv.ThirdPerson_Offset = read<DWORD>(nv.ThirdPerson_Offset + 0x2);
+			log(RGS("dwThirdPerson_Offset"), nv.ThirdPerson_Offset);
 		}
 
-		DWORD64 Coordinate_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\x44\x0f\x29\x5c\x24", "000????00000").Base;
-		if (Coordinate_Base) {
-			DWORD offset = read<DWORD>(Coordinate_Base + 0x3);
-			Coordinate_Base = Coordinate_Base + offset + 0x7;
-			Coordinate_Base -= CShell_x64.baseAddr;
-			log("dwCoordinate_Base", Coordinate_Base);
+		nv.Coordinate_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\x44\x0f\x29\x5c\x24", "000????00000").Base;
+		if (nv.Coordinate_Base) {
+			DWORD offset = read<DWORD>(nv.Coordinate_Base + 0x3);
+			nv.Coordinate_Base = nv.Coordinate_Base + offset + 0x7;
+			nv.Coordinate_Base -= CShell_x64.baseAddr;
+			log(RGS("dwCoordinate_Base"), nv.Coordinate_Base);
 		}
 
-		DWORD64 Coordinate_Offset1 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\xb0\x00\x00\x00\x00\xc6\x41", "000????00").Base;
-		if (Coordinate_Offset1) {
-			Coordinate_Offset1 = read<DWORD>(Coordinate_Offset1 + 0x3);
-			log("dwCoordinate_Offset1", Coordinate_Offset1);
+		nv.Coordinate_Offset1 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\xb0\x00\x00\x00\x00\xc6\x41", "000????00").Base;
+		if (nv.Coordinate_Offset1) {
+			nv.Coordinate_Offset1 = read<DWORD>(nv.Coordinate_Offset1 + 0x3);
+			log(RGS("dwCoordinate_Offset1"), nv.Coordinate_Offset1);
 		}
 
-		DWORD64 Coordinate_Offset2 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x4c\x8b\xb6\x00\x00\x00\x00\x48\x8b\x18", "000????000").Base;
-		if (Coordinate_Offset2) {
-			Coordinate_Offset2 = read<DWORD>(Coordinate_Offset2 + 0x3);
-			log("dwCoordinate_Offset2", Coordinate_Offset2);
+		nv.Coordinate_Offset2 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x4c\x8b\xb6\x00\x00\x00\x00\x48\x8b\x18", "000????000").Base;
+		if (nv.Coordinate_Offset2) {
+			nv.Coordinate_Offset2 = read<DWORD>(nv.Coordinate_Offset2 + 0x3);
+			log(RGS("dwCoordinate_Offset2"), nv.Coordinate_Offset2);
 		}
 
-		DWORD64 Coordinate_Offset3 = FindPattern::FindPattern((DWORD64)crossfire.baseAddr, (DWORD64)crossfire.sizeDll, (PBYTE)"\xf3\x44\x0f\x10\x8f\x00\x00\x00\x00\x41\x0f\x28\xfa", "00000????0000").Base;
-		if (Coordinate_Offset3) {
-			Coordinate_Offset3 = read<DWORD>(Coordinate_Offset3 + 0x5);
-			log("dwCoordinate_Offset3", Coordinate_Offset3);
+		nv.Coordinate_Offset3 = FindPattern::FindPattern((DWORD64)crossfire.baseAddr, (DWORD64)crossfire.sizeDll, (PBYTE)"\xf3\x44\x0f\x10\x8f\x00\x00\x00\x00\x41\x0f\x28\xfa", "00000????0000").Base;
+		if (nv.Coordinate_Offset3) {
+			nv.Coordinate_Offset3 = read<DWORD>(nv.Coordinate_Offset3 + 0x5);
+			log(RGS("dwCoordinate_Offset3"), nv.Coordinate_Offset3);
 		}
 		
-		DWORD64 CharacterFunc = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x15\x00\x00\x00\x00\x48\x23\x0d", "000????000").Base;
-		if (CharacterFunc) {
-			DWORD offset = read<DWORD>(CharacterFunc + 0x3);
-			CharacterFunc = CharacterFunc + offset + 0x7;
-			CharacterFunc -= CShell_x64.baseAddr;
-			log("dwCharacterFunc", CharacterFunc);
+		nv.CharacterFunc = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x15\x00\x00\x00\x00\x48\x23\x0d", "000????000").Base;
+		if (nv.CharacterFunc) {
+			DWORD offset = read<DWORD>(nv.CharacterFunc + 0x3);
+			nv.CharacterFunc = nv.CharacterFunc + offset + 0x7;
+			nv.CharacterFunc -= CShell_x64.baseAddr;
+			log(RGS("dwCharacterFunc"), nv.CharacterFunc);
 		}
 
-		DWORD64 CFTTable = FindPattern::FindPattern((DWORD64)crossfire.baseAddr, (DWORD64)crossfire.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\x48\x85\xc0\x75\x00\xb9\x00\x00\x00\x00\xe8\x00\x00\x00\x00\x45\x33\xc0", "000????0000?0????0????000").Base;
-		if (CFTTable) {
-			DWORD offset = read<DWORD>(CFTTable + 0x3);
-			CFTTable = CFTTable + offset + 0x7;
-			CFTTable -= crossfire.baseAddr;
-			log("dwCFTTable", CFTTable);
+		nv.CFTTable = FindPattern::FindPattern((DWORD64)crossfire.baseAddr, (DWORD64)crossfire.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\x48\x85\xc0\x75\x00\xb9\x00\x00\x00\x00\xe8\x00\x00\x00\x00\x45\x33\xc0", "000????0000?0????0????000").Base;
+		if (nv.CFTTable) {
+			DWORD offset = read<DWORD>(nv.CFTTable + 0x3);
+			nv.CFTTable = nv.CFTTable + offset + 0x7;
+			nv.CFTTable -= crossfire.baseAddr;
+			log(RGS("dwCFTTable"), nv.CFTTable);
 		}
 
-		DWORD64 dwLTShell = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\xba\x00\x00\x00\x00\x48\x8b\x88\x00\x00\x00\x00\x48\x8b\x01\xff\x90\x00\x00\x00\x00\x40\x0f\xb6\xd7", "000????0????000????00000????0000").Base;
-		if (dwLTShell) {
-			DWORD offset = read<DWORD>(dwLTShell + 0x3);
-			dwLTShell = dwLTShell + offset + 0x7;
-			dwLTShell -= CShell_x64.baseAddr;
-			log("dwLTShell", dwLTShell);
+		nv.dwLTShell = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\xba\x00\x00\x00\x00\x48\x8b\x88\x00\x00\x00\x00\x48\x8b\x01\xff\x90\x00\x00\x00\x00\x40\x0f\xb6\xd7", "000????0????000????00000????0000").Base;
+		if (nv.dwLTShell) {
+			DWORD offset = read<DWORD>(nv.dwLTShell + 0x3);
+			nv.dwLTShell = nv.dwLTShell + offset + 0x7;
+			nv.dwLTShell -= CShell_x64.baseAddr;
+			log(RGS("dwLTShell"), nv.dwLTShell);
 		}
 
-		DWORD64 dwENT_BEGIN = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x4c\x8b\xbc\x39\x00\x00\x00\x00\x48\x85\xc0", "0000????000").Base;
-		if (dwENT_BEGIN) {
-			dwENT_BEGIN = read<DWORD>(dwENT_BEGIN + 0x4);
-			log("dwENT_BEGIN", dwENT_BEGIN);
+		nv.dwENT_BEGIN = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x4c\x8b\xbc\x39\x00\x00\x00\x00\x48\x85\xc0", "0000????000").Base;
+		if (nv.dwENT_BEGIN) {
+			nv.dwENT_BEGIN = read<DWORD>(nv.dwENT_BEGIN + 0x4);
+			log(RGS("dwENT_BEGIN"), nv.dwENT_BEGIN);
 		}
 
-		DWORD64 dwENT_SIZE = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x69\xc8\x00\x00\x00\x00\x0f\x29\xb4\x24\x00\x00\x00\x00\x48\x8b\x05", "000????0000????000").Base;
-		if (dwENT_SIZE) {
-			dwENT_SIZE = read<DWORD>(dwENT_SIZE + 0x3);
-			log("dwENT_SIZE", dwENT_SIZE);
+		nv.dwENT_SIZE = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x69\xc8\x00\x00\x00\x00\x0f\x29\xb4\x24\x00\x00\x00\x00\x48\x8b\x05", "000????0000????000").Base;
+		if (nv.dwENT_SIZE) {
+			nv.dwENT_SIZE = read<DWORD>(nv.dwENT_SIZE + 0x3);
+			log(RGS("dwENT_SIZE"), nv.dwENT_SIZE);
 		}
 
-		DWORD64 dwLOCAL_ENT_INDEX = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x41\x0f\xb6\x86\x00\x00\x00\x00\x4c\x69\xf8", "0000????000").Base;
-		if (dwLOCAL_ENT_INDEX) {
-			dwLOCAL_ENT_INDEX = read<DWORD>(dwLOCAL_ENT_INDEX + 0x4);
-			log("dwLOCAL_ENT_INDEX", dwLOCAL_ENT_INDEX);
+		nv.dwLOCAL_ENT_INDEX = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x41\x0f\xb6\x86\x00\x00\x00\x00\x4c\x69\xf8", "0000????000").Base;
+		if (nv.dwLOCAL_ENT_INDEX) {
+			nv.dwLOCAL_ENT_INDEX = read<DWORD>(nv.dwLOCAL_ENT_INDEX + 0x4);
+			log(RGS("dwLOCAL_ENT_INDEX"), nv.dwLOCAL_ENT_INDEX);
 		}
 		
-		DWORD64 FastGun = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x7a\x00\x00\x00\x7f", "000?000").Base;
-		if (FastGun) {
-			FastGun -= CShell_x64.baseAddr;
-			log("dwFastGun", FastGun);
+		nv.FastGun = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x7a\x00\x00\x00\x7f", "000?000").Base;
+		if (nv.FastGun) {
+			nv.FastGun -= CShell_x64.baseAddr;
+			log(RGS("dwFastGun"), nv.FastGun);
 		}
 
+		nv.CopyRoomBase = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8B\x00\x00\x00\x00\x00\x48\x00\x00\x75\x1F\xB9\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x48\x89\x44\x24\x00\x48\x8B\xC8\xE8\x00\x00\x00\x00\x90\x48\x89\x00\x00\x00\x00\x00\x48\x83\xC4\x00\xC3\xCC\xCC\xCC\x41\x56", "00?????0??000????0????0000?0000????000?????000?000000").Base;
+		if (nv.CopyRoomBase) {
+			DWORD offset = read<DWORD>(nv.CopyRoomBase + 0x3);
+			nv.CopyRoomBase = nv.CopyRoomBase + offset + 0x7;
+			nv.CopyRoomBase -= CShell_x64.baseAddr;
+			log(RGS("dwCopyRoomBase"), nv.CopyRoomBase);
+		}
+
+		nv.CopyRoomOffset1 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x40\x00\x8b\x88\x00\x00\x00\x00\x83\xf9\x00\x75", "000?00????00?0").Base;
+		if (nv.CopyRoomOffset1) {
+			nv.CopyRoomOffset1 = read<BYTE>(nv.CopyRoomOffset1 + 0x3);
+			log(RGS("dwCopyRoomOffset1"), nv.CopyRoomOffset1);
+		}
+
+		nv.CopyRoomOffset2 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x89\x8B\x00\x00\x00\x00\x4C\x8D\xBB\x00\x00\x00\x00\x41\x8B\x3F", "000????000????000").Base;
+		if (nv.CopyRoomOffset2) {
+			nv.CopyRoomOffset2 = read<DWORD>(nv.CopyRoomOffset2 + 0x3);
+			log(RGS("dwCopyRoomOffset2"), nv.CopyRoomOffset2);
+		}
+
+		nv.SkillE_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x80\xBB\x00\x00\x00\x00\x00", "0??????0?00000000000000?????").Base;
+		if (nv.SkillE_Base) {
+			nv.SkillE_Base -= CShell_x64.baseAddr;
+			log(RGS("dwSkillE_Base"), nv.SkillE_Base);
+		}
+
+		nv.SkillE_Offset = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x8B\x81\x00\x00\x00\x00\x83\xF8\x00\x75\x03\xB0\x00\xC3", "00????00?000?0").Base;
+		if (nv.SkillE_Offset) {
+			nv.SkillE_Offset = read<DWORD>(nv.SkillE_Offset + 0x2);
+			log(RGS("dwSkillE_Offset"), nv.SkillE_Offset);
+		}
+		Beep(300, 500);
 		isgetaddress = true;
 	}
 	return 1;
@@ -728,8 +577,8 @@ __CODERDUC__{
 	Sleep(1000);
 
 	if (!pid && !crossfire.baseAddr && !CShell_x64.baseAddr && !ClientFx_x64.baseAddr) {
-		pid = get_process_id(RGS("crossfire.exe"));
-		crossfire = get_module_base_addr(RGS("crossfire.exe"));
+		pid = get_process_id(RGS("crossfire.dat"));
+		crossfire = get_module_base_addr(RGS("crossfire.dat"));
 		CShell_x64 = get_module_base_addr(RGS("cshell_x64.dll"));
 		ClientFx_x64 = get_module_base_addr(RGS("ClientFx_x64.fxd"));
 	}
@@ -741,140 +590,14 @@ __CODERDUC__{
  \______  /\____   |   \______  /____/__||__|  \___  >___|  /\___  >__|
 		\/      |__|          \/                   \/     \/     \/
 )" << '\n';
+	CheckPoint = VK_F2;
+	ReturnCheckPoint = VK_F3;
+	SecondPerson = 'V';
+	CopyRoomID = VK_F4;
+	PasteRoomID = VK_F5;
+	SkillE = VK_SHIFT;
 	Prepare();
-	//char Define[50];
-	//uintptr_t tCFTTable = read<uintptr_t>(crossfire.baseAddr + /*0xF569C0*/0x10B2AE0);
-	//uintptr_t tDefineCFT = read<uintptr_t>(tCFTTable + 0x8);
-	//uintptr_t lList = read<uintptr_t>(tDefineCFT + 0x10);
-	//for (int i = 0; i < 34; i++) {
-	//	uintptr_t rowData = read<uintptr_t>(lList + (i * 8));
-	//	int _Enable = read<int>(rowData + 0x30);
-	//	if (i == 22 || i == 2 || i == 3 || i == 6 || i == 18 || i == 0) {
-	//		write<int>(rowData + 0x30, 0);
-	//	}
-	//	if (i == 10 || i == 14 || i == 15 || i == 16) {
-	//		write<int>(rowData + 0x30, 0);
-	//	}
-	//	read_raw<char>(rowData + 0x10, Define, 50);
-	//	if ((Define[0] != 'U') || (Define[0] != 'E')) {
-	//		read_raw<char>(read<uintptr_t>(rowData + 0x10) + 0x0, Define, 50);
-	//	}
-	//	cout << i << "\t" << Define << "\t\t" << _Enable << endl;
-	//}
-
-	/*uintptr_t CFTTableManager = read<uintptr_t>(crossfire.baseAddr + 0x10B2AE0);
-	uintptr_t WeaponBanTable = read<uintptr_t>(CFTTableManager + 0x628);
-	uintptr_t listData = read<uintptr_t>(WeaponBanTable + 0x10);
-	for (int i = 0; i < 15; i++) {
-		uintptr_t rowData = read<uintptr_t>(listData + (i * 8));
-		int weaponIndexChangeTo = read<int>(rowData + 0x80);
-		cout << i << "\t\t" << weaponIndexChangeTo << endl;
-	}*/
-
+	SupportFunction();
 	system(RGS("pause"));
 	return 0;
 }
-
-
-////ModelBute (Damage Factor)
-	//uintptr_t base = read<uintptr_t>(crossfire.baseAddr + 0x109FE60);
-	//uintptr_t p = read<uintptr_t>(base + 0x40);
-	//uintptr_t p1 = read<uintptr_t>(p + 0x10);
-
-	//for (int i = 0; i < 2839; i++) {
-	//	uintptr_t p2 = read<uintptr_t>(p1 + (i * 8));
-	//	float r = read<float>(p2 + 0x38);
-	//	cout << i << " - " << r << endl;
-	//}
-
-//Dimensions Log
-//ofstream fileout("1.txt");
-//fileout << "{ ";
-//for (int i = 1; i <= 2915; i++) {
-//
-//	float x = read<float>(dDimensionBase + (i - 1) * 0xA4 + 0x38);
-//	float y = read<float>(dDimensionBase + (i - 1) * 0xA4 + 0x3C);
-//	float z = read<float>(dDimensionBase + (i - 1) * 0xA4 + 0x40);
-//	if (x == 99.0 && y == 99.0 && z == 99.0)
-//		fileout << "{" << i << ", {" << x << "," << y << "," << z << "} }, ";
-//}
-//fileout << "}";
-//fileout.close();
-
-////Room bot
-		//if (GetAsyncKeyState(VK_F4) & 1) {
-		//	Beep(500, 500);
-		//	if (inGameStatus == 8) {
-		//		uintptr_t roomBotBase = read<uintptr_t>(cshell.baseAddr + dwRoomBot);
-		//		int room = read<int>(read<uintptr_t>(read<uintptr_t>(roomBotBase + dwRoomBot_Offset1) + dwRoomBot_Offset2) + dwRoomBot_Offset3);
-		//		if (room != 1) {
-		//			write<int>(read<uintptr_t>(read<uintptr_t>(roomBotBase + dwRoomBot_Offset1) + dwRoomBot_Offset2) + dwRoomBot_Offset3, 1);
-		//			write<int>(read<uintptr_t>(read<uintptr_t>(roomBotBase + dwRoomBot_Offset1) + dwRoomBot_Offset2) + dwRoomBot_Offset4, 1);
-		//		}
-		//	}
-		//}
-
-/*vector<pair<int, vector<float>>> DimensionsMod = { {1139, {150, 200, 150}}, {31, {99,99,99} }, {46, {99,99,99} }, {72, {99,99,99} }, {88, {99,99,99} }, {103, {99,99,99} }, {118, {99,99,99} }, {140, {99,99,99} }, {159, {99,99,99} }, {160, {99,99,99} }, {189, {99,99,99} }, {204, {99,99,99} }, {264, {99,99,99} }, {284, {99,99,99} }, {312, {99,99,99} }, {328, {99,99,99} }, {345, {99,99,99} }, {362, {99,99,99} }, {377, {99,99,99} }, {393, {99,99,99} }, {431, {99,99,99} }, {446, {99,99,99} }, {468, {99,99,99} }, {489, {99,99,99} }, {530, {99,99,99} }, {545, {99,99,99} }, {571, {99,99,99} }, {604, {99,99,99} }, {619, {99,99,99} }, {632, {99,99,99} }, {634, {99,99,99} }, {654, {99,99,99} }, {675, {99,99,99} }, {706, {99,99,99} }, {717, {99,99,99} }, {727, {99,99,99} }, {735, {99,99,99} }, {743, {99,99,99} }, {761, {99,99,99} }, {771, {99,99,99} }, {782, {99,99,99} }, {792, {99,99,99} }, {800, {99,99,99} }, {811, {99,99,99} }, {821, {99,99,99} }, {829, {99,99,99} }, {837, {99,99,99} }, {855, {99,99,99} }, {865, {99,99,99} }, {876, {99,99,99} }, {886, {99,99,99} }, {910, {99,99,99} }, {923, {99,99,99} }, {938, {99,99,99} }, {953, {99,99,99} }, {999, {99,99,99} }, {1026, {99,99,99} }, {1036, {99,99,99} }, {1051, {99,99,99} }, {1062, {99,99,99} }, {1063, {99,99,99} }, {1079, {99,99,99} }, {1090, {99,99,99} }, {1105, {99,99,99} }, {1140, {99,99,99} }, {1158, {99,99,99} }, {1173, {99,99,99} }, {1188, {99,99,99} }, {1213, {99,99,99} }, {1228, {99,99,99} }, {1248, {99,99,99} }, {1249, {99,99,99} }, {1250, {99,99,99} }, {1266, {99,99,99} }, {1282, {99,99,99} }, {1283, {99,99,99} }, {1312, {99,99,99} }, {1329, {99,99,99} }, {1353, {99,99,99} }, {1378, {99,99,99} }, {1406, {99,99,99} }, {1416, {99,99,99} }, {1424, {99,99,99} }, {1442, {99,99,99} }, {1465, {99,99,99} }, {1480, {99,99,99} }, {1506, {99,99,99} }, {1514, {99,99,99} }, {1532, {99,99,99} }, {1547, {99,99,99} }, {1592, {99,99,99} }, {1602, {99,99,99} }, {1619, {99,99,99} }, {1629, {99,99,99} }, {1640, {99,99,99} }, {1648, {99,99,99} }, {1649, {99,99,99} }, {1678, {99,99,99} }, {1696, {99,99,99} }, {1709, {99,99,99} }, {1725, {99,99,99} }, {1739, {99,99,99} }, {1768, {99,99,99} }, {1784, {99,99,99} }, {1797, {99,99,99} }, {1799, {99,99,99} }, {1826, {99,99,99} }, {1850, {99,99,99} }, {1882, {99,99,99} }, {1897, {99,99,99} }, {1916, {99,99,99} }, {1941, {99,99,99} }, {1953, {99,99,99} }, {1979, {99,99,99} }, {1980, {99,99,99} }, {1991, {99,99,99} }, {2007, {99,99,99} }, {2034, {99,99,99} }, {2071, {99,99,99} }, {2072, {99,99,99} }, {2101, {99,99,99} }, {2116, {99,99,99} }, {2181, {99,99,99} }, {2224, {99,99,99} }, {2248, {99,99,99} }, {2272, {99,99,99} }, {2294, {99,99,99} }, {2313, {99,99,99} }, {2328, {99,99,99} }, {2342, {99,99,99} }, {2343, {99,99,99} }, {2372, {99,99,99} }, {2387, {99,99,99} }, {2388, {99,99,99} }, {2417, {99,99,99} }, {2441, {99,99,99} }, {2442, {99,99,99} }, {2471, {99,99,99} }, {2508, {99,99,99} }, {2509, {99,99,99} }, {2546, {99,99,99} }, {2567, {99,99,99} }, {2568, {99,99,99} }, {2597, {99,99,99} }, {2613, {99,99,99} }, {2628, {99,99,99} }, {2629, {99,99,99} }, {2694, {99,99,99} }, {2710, {99,99,99} }, {2725, {99,99,99} }, {2744, {99,99,99} }, {2783, {99,99,99} }, {2800, {99,99,99} }, {2820, {99,99,99} }, {2840, {99,99,99} }, {2866, {99,99,99} }, {2877, {99,99,99} }, {2903, {99,99,99} }, {2904, {99,99,99} } };
-	uintptr_t dDimensionBase = read<uintptr_t>(CShell_x64.baseAddr + 0x2771908);
-
-	for (int i = 1; i <= 2915; i++) {
-		for (int j = 0; j < DimensionsMod.size(); j++) {
-			if (i == DimensionsMod[j].first) {
-				write<float>(dDimensionBase + (i - 1) * 0xA4 + 0x38, DimensionsMod[j].second[0]);
-				write<float>(dDimensionBase + (i - 1) * 0xA4 + 0x3C, DimensionsMod[j].second[1]);
-				write<float>(dDimensionBase + (i - 1) * 0xA4 + 0x40, DimensionsMod[j].second[2]);
-				break;
-			}
-		}
-	}*/
-
-////Bunnyhop
-//if (GetAsyncKeyState(VK_F4) & 1) {
-//	Beep(300, 500);
-//	isBunny = !isBunny;
-//}
-//if (isBunny) {
-//	write<int>(cshell.baseAddr + dwBunnyhop, 0);
-//}
-
-//void NoSmoke() {
-//	BYTE noSmoke[] = { 0xEB };
-//	changeProtection(pid, crossfire.baseAddr + dwCrossfireWebView + dwNoSmoke, 1, PAGE_EXECUTE_READWRITE);
-//	writeBytes(crossfire.baseAddr + dwCrossfireWebView + dwNoSmoke, &noSmoke, sizeof(noSmoke));
-//	changeProtection(pid, crossfire.baseAddr + dwCrossfireWebView + dwNoSmoke, 1, 0);
-//}
-
-//Increase hit box
-//while (true) {
-	//	int inGameStatus = read<int>(_rt.baseAddr + 0x273A174);
-	//	uintptr_t t = read<uintptr_t>(_rt.baseAddr + 0x2738CB0);
-	//	if (inGameStatus == 0xD) {//Ngoai sanh
-	//		for (int x = 1; x <= 244; x++) {
-	//			r = read<int>(t + (0xD14 + ((0xEEC * x) - 0xEEC)));
-	//			Backup[x] = r;
-	//			write<int>(t + (0xD14 + ((0xEEC * x) - 0xEEC)), 0xB1);
-	//		}
-	//	}
-	//	else if (inGameStatus == 0xB) {//Trong game
-	//		for (int x = 1; x <= 244; x++) {
-	//			write<int>(t + (0xD14 + ((0xEEC * x) - 0xEEC)), Backup[x]);
-	//		}
-	//	}
-	//}
-
-//Bug Zombie
-//static uintptr_t BaseZombie, GameUI, NanoZombie;
-//BaseZombie = read<uintptr_t>(crossfire.baseAddr + a__BaseBugZombie);
-//if (BaseZombie) {
-//	GameUI = read<uintptr_t>(BaseZombie + a__OffsetBugZombie1);
-//	if (GameUI) {
-//		NanoZombie = read<uintptr_t>(GameUI + a__OffsetBugZombie2);
-//		if (NanoZombie) {
-//			for (int x = 0; x < 7; x++) {
-//				changeProtection(pid, NanoZombie + a__OffsetBugZombie3 + (4 * x), 1, PAGE_EXECUTE_READWRITE);
-//				write<int>(NanoZombie + a__OffsetBugZombie3 + (4 * x), 1);
-//				std::cout << "Zombie Done" << std::endl;
-//			}
-//		}
-//	}
-//}
