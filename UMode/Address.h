@@ -1,37 +1,4 @@
-﻿#pragma once
-
-//Address=00007FFDD3018050
-//Type = Export
-//Ordinal = 12
-//Symbol = ? ? 4CFWebView@WebView@@QEAAAEAV01@AEBV01@@Z
-//Symbol(undecorated) = public: class WebView::CFWebView & __ptr64 __cdecl WebView::CFWebView::operator=(class WebView::CFWebView const& __ptr64) __ptr64
-//dwWebView_CFWebView = Address - cshell_x64.dll ==> 0x5C8050
-#define dwWebView_CFWebView 0x5C8050
-
-//Address = 00007FFEC73AD040
-//Type = Export
-//Ordinal = 11
-//Symbol = ? ? 4CFWebArgument@WebView@@QEAAAEAV01@AEBV01@@Z
-//Symbol(undecorated) = public: class WebView::CFWebArgument & __ptr64 __cdecl WebView::CFWebArgument::operator=(class WebView::CFWebArgument const& __ptr64) __ptr64
-//dwWebView_CFWebArgument = Address - cshell_x64.dll ==> 0x13D040
-#define dwWebView_CFWebArgument 0x13D040
-
-//Address = 00007FFAA2EA6C60
-//Type = Export
-//Ordinal = 18
-//Symbol = ? GetData@CFWebView@WebView@@QEBA_KXZ
-//Symbol(undecorated) = public: unsigned __int64 __cdecl WebView::CFWebView::GetData(void)const __ptr64
-//dwWebView_GetData = Address - cshell_x64.dll ==> 0x126C60
-#define dwWebView_GetData 0x126C60
-
-
-//Address = 00000001401C97B0
-//Type = Export
-//Ordinal = 12
-//Symbol = ? ? 4CFWebView@WebView@@QEAAAEAV01@AEBV01@@Z
-//Symbol(undecorated) = public: class WebView::CFWebView & __ptr64 __cdecl WebView::CFWebView::operator=(class WebView::CFWebView const& __ptr64) __ptr64
-#define dwCrossfireWebView 0x1C97B0
-
+#pragma once
 //InGameStatus
 // STring: ButtonGlobalQuickJoin
 // 8b 15 ? ? ? ? ff 90 ? ? ? ? f6 05
@@ -44,7 +11,7 @@
 //cshell_x64.WebView::CFWebView::operator=+56BEED - E8 7E888100 - call cshell_x64.WebView::CFWebView::operator=+D84770
 //cshell_x64.WebView::CFWebView::operator=+56BEF2 - 44 38 3D CF8DC301 - cmp[cshell_x64.dll + 276F448], r15l{ [00000000] }
 //cshell_x64.WebView::CFWebView::operator=+56BEF9 - 74 19 - je cshell_x64.WebView::CFWebView::operator=+56BF14
-#define dwinGameStatus 0x27FA894
+#define dwinGameStatus 0x296AAA8
 
 //GM Chat
 // 00 01 00 00 00 00 00 00 E0 93 04
@@ -56,7 +23,7 @@
 //crossfire.WebView::CFWebView::operator=+167937 - 48 8D AC 24 F0FBFFFF - lea rbp, [rsp - 00000410]
 //crossfire.WebView::CFWebView::operator=+16793F - 48 81 EC 10050000 - sub rsp, 00000510 { 1296 }
 //crossfire.WebView::CFWebView::operator=+167946 - 48 8B 05 93A22D00 - mov rax, [crossfire.dat + 60B390] { ["cHA|u"] }
-//crossfire.WebView::CFWebView::operator=+16794D - 48 33 C4 - xor rax, rsp
+//crossfire.WebView::CFWebView::operator=+16794D - 48 33 C4 - skCrypt rax, rsp
 //crossfire.WebView::CFWebView::operator=+167950 - 48 89 85 F0030000 - mov[rbp + 000003F0], rax
 //crossfire.WebView::CFWebView::operator=+167957 - 65 48 8B 04 25 58000000 - mov rax, gs:[00000058] { 88 }
 //crossfire.WebView::CFWebView::operator=+167960 - 4C 8D 25 B9D6DA00     - lea r12,[crossfire.dat+10DE7D0] { [00000000] }    ==> 0x10DE7D0 Wall hack
@@ -125,7 +92,7 @@
 //cshell_x64.dll + 21BF81D - 99 - cdq
 //cshell_x64.dll + 21BF81E - 99 - cdq
 
-#define dwNoRecoil 0x22357E4
+#define dwNoRecoil 0x236B77C
 
 
 //No Fall Damage
@@ -151,7 +118,7 @@
 // 48 8d 15 ? ? ? ? 48 8d 4c 24 ? e8 ? ? ? ? 4c 8d 44 24 ? ba ? ? ? ? 48 8d 8f
 //cshell_x64.WebView::CFWebView::operator=+138075B - 48 8D 15 06118700 - lea rdx, [cshell_x64.dll + 21BBFE8] { ["rez\Butes\%s_DZ.ltc"] } => 0x21BBFE8
 
-#define dwNoBugDamage 0x2231F98
+#define dwNoBugDamage 0x2367FF0
 
 //48 8d 0d ? ? ? ? e8 ? ? ? ? 48 83 7b ? ? 48 8d 53 ? 75 ? 41 b8 ? ? ? ? 48 8d 0d ? ? ? ? e8 ? ? ? ? 33 c0 48 83 c4 ? 5b c3 cc cc cc cc cc 40 57 48 83 ec ? 48 c7 44 24 ? ? ? ? ? 48 89 5c 24 ? 48 8b d9 33 ff 48 39 79 ? 74 ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 8b 4b ? 48 85 c9 74 ? 48 89 7c 24 ? 48 8b 01 ff 50 ? 48 89 7b ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 89 7c 24 ? 48 8b 4b ? 48 85 c9 74 ? 48 8b 01 ff 50 ? 48 89 7b ? 48 83 7b ? ? 74 ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 8b 4b ? 48 85 c9 74 ? 48 89 7c 24 ? 48 8b 01 ff 50 ? 48 89 7b ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 89 7c 24 ? 48 8b 4b ? 48 85 c9 74 ? 48 8b 01 ff 50 ? 48 89 7b ? 33 c0 48 8b 5c 24 ? 48 83 c4 ? 5f c3 cc cc cc cc cc cc cc cc cc 40 57 48 83 ec ? 48 c7 44 24 ? ? ? ? ? 48 89 5c 24 ? 48 8b d9
 //48 8d 0d ? ? ? ? e8 ? ? ? ? 33 c0 48 83 c4 ? 5b c3 cc cc cc cc cc 40 57 48 83 ec ? 48 c7 44 24 ? ? ? ? ? 48 89 5c 24 ? 48 8b d9 33 ff 48 39 79 ? 74 ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 8b 4b ? 48 85 c9 74 ? 48 89 7c 24 ? 48 8b 01 ff 50 ? 48 89 7b ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 89 7c 24 ? 48 8b 4b ? 48 85 c9 74 ? 48 8b 01 ff 50 ? 48 89 7b ? 48 83 7b ? ? 74 ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 8b 4b ? 48 85 c9 74 ? 48 89 7c 24 ? 48 8b 01 ff 50 ? 48 89 7b ? 48 8d 0d ? ? ? ? ff 15 ? ? ? ? 48 89 7c 24 ? 48 8b 4b ? 48 85 c9 74 ? 48 8b 01 ff 50 ? 48 89 7b ? 33 c0 48 8b 5c 24 ? 48 83 c4 ? 5f c3 cc cc cc cc cc cc cc cc cc 40 57 48 83 ec ? 48 c7 44 24 ? ? ? ? ? 48 89 5c 24 ? 48 8b d9
@@ -191,10 +158,10 @@
 //cshell_x64.WebView::CFWebView::operator=+E2E82D - C6 05 677A3701 00 - mov byte ptr[cshell_x64.dll + 2770A1B], 00 { [0] }
 //cshell_x64.WebView::CFWebView::operator=+E2E834 - 83 FA 5F - cmp edx, 5F{ 95 }
 //cshell_x64.WebView::CFWebView::operator=+E2E837 - 75 2A - jne cshell_x64.WebView::CFWebView::operator=+E2E863
-//cshell_x64.WebView::CFWebView::operator=+E2E839 - 33 C0 - xor eax, eax
+//cshell_x64.WebView::CFWebView::operator=+E2E839 - 33 C0 - skCrypt eax, eax
 //cshell_x64.WebView::CFWebView::operator=+E2E83B - 4C 8D 0D 6EA4CF00 - lea r9, [cshell_x64.dll + 20F3430] { ["vertex lock failed"] }
 //cshell_x64.WebView::CFWebView::operator=+E2E842 - 48 89 44 24 38 - mov[rsp + 38], rax
-//cshell_x64.WebView::CFWebView::operator=+E2E847 - 45 33 C0 - xor r8d, r8d
+//cshell_x64.WebView::CFWebView::operator=+E2E847 - 45 33 C0 - skCrypt r8d, r8d
 //cshell_x64.WebView::CFWebView::operator=+E2E84A - 48 89 44 24 30 - mov[rsp + 30], rax
 //cshell_x64.WebView::CFWebView::operator=+E2E84F - 48 89 44 24 28 - mov[rsp + 28], rax
 //cshell_x64.WebView::CFWebView::operator=+E2E854 - 8D 50 77 - lea edx, [rax + 77]
@@ -220,7 +187,7 @@
 
 #define dwNoSmoke 0x3C93CF
 
-//Z coordinate base: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 00 00 00 00 80 ? ? ? ? bb
+//Z coordinate base: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 00 00 00 00 80 ?? ?? ?? ??
 //cshell_x64.dll+2318040 - 00 00                 - add [rax],al
 //cshell_x64.dll + 29F23F0 - 00 00 - add[rax], al
 //Z coordinate offset 1: 8b 82 ? ? ? ? 41 89 40 ? 8b 82 ? ? ? ? 41 89 40 ? 33 c0 48 83 c4 ? c3 83 3d ? ? ? ? ? 74 ? ff 15 ? ? ? ? 83 3d ? ? ? ? ? 7c ? 4c 8d 0d ? ? ? ? 4c 8d 05 ? ? ? ? 48 8d 15 ? ? ? ? 48 8d 0d ? ? ? ? e8 ? ? ? ? b8 ? ? ? ? 48 83 c4 ? c3 cc cc cc cc cc cc cc cc cc cc cc 48 83 ec ? 48 85 d2 74 ? 4d 85 c0 74 ? 8b 82 ? ? ? ? 41 89 00 8b 82 ? ? ? ? 41 89 40 ? 8b 82 ? ? ? ? 41 89 40 ? 8b 82 ? ? ? ? 41 89 40 ? 33 c0 48 83 c4 ? c3 83 3d ? ? ? ? ? 74 ? ff 15 ? ? ? ? 83 3d ? ? ? ? ? 7c ? 4c 8d 0d ? ? ? ? 4c 8d 05 ? ? ? ? 48 8d 15 ? ? ? ? 48 8d 0d ? ? ? ? e8 ? ? ? ? b8 ? ? ? ? 48 83 c4 ? c3 cc f3 0f 10 02 ~~ f3 44 0f 10 8f ? ? ? ? 41 0f 28 fa
@@ -228,9 +195,26 @@
 //coordinate base : cshell_x64.dll + 0x295A9D0
 //offset 1 : 548
 //offset 2 : 1A0
-#define dwCoordinate_Base 0x29F23F0
-#define dwCoordinate_Offset1 0x548
-#define dwCoordinate_Offset2 0x1A0
+//#define dwCoordinate_Base 0x29F23F0
+//#define dwCoordinate_Offset1 0x548
+//#define dwCoordinate_Offset2 0x1A0
+
+//48 8b 05 ? ? ? ? 44 0f 29 5c 24
+//cshell_x64.dll+128474A - 48 8B 05 473D7201     - mov rax,[cshell_x64.dll+29A8498] { (7FFCD91907F0) }  ==> 29A8498
+#define dwCoordinate_Base 0x296C550
+
+//48 8b b0 ? ? ? ? c6 41
+//cshell_x64.dll+1284757 - 48 8B B0 90000000     - mov rsi,[rax+00000090] ==> 90
+#define dwCoordinate_Offset1 0x90
+
+//4c 8b b6 ? ? ? ? 48 8b 18
+//cshell_x64.dll+1284796 - 4C 8B B6 18050000     - mov r14,[rsi+00000518] ==> 0x518
+#define dwCoordinate_Offset2 0x548
+
+
+//f3 44 0f 10 8f ? ? ? ? 41 0f 28 fa
+//crossfire.exe+8CEB6 - F3 44 0F10 8F A0010000  - movss xmm9,[rdi+000001A0] ==> 1A0
+#define dwCoordinate_Offset3 0x1A0
 
 //Room bot 1 :cshell_x64.dll+2ECEE90
 //Offset 3: 44 89 81 ?? ?? ?? ?? 89 91 ?? ?? ?? ?? 41 8B ?? (
@@ -256,7 +240,7 @@
 //Skill E Offset: 8B 81 ?? ?? ?? ?? 83 F8 ?? 75 03 B0 ?? C3
 //Base: cshell_x64.dll+295A9D0 - 00 00                 - add [rax],al     ==> 0x295A9D0
 //Offset: cshell_x64.dll+993F89 - 8B 81 DC080000        - mov eax,[rcx+000008DC]      ==> 0x8DC
- 
+
 #define dwSkillE_Base 0x29F23F0
 #define dwSkillE_Offset 0x8DC
 
@@ -265,7 +249,7 @@
 //Base: cshell_x64.dll+295A980 - 10 12                 - adc [rdx],dl      ==> 0x295A980
 //Offset: cshell_x64.dll+1014CEA - 8B 83 98000000        - mov eax,[rbx+00000098]     ==> 0x98
 
-#define dwThirdPerson_Base 0x29F23A0
+#define dwThirdPerson_Base 0x2B632C0
 #define dwThirdPerson_Offset 0x98
 
 //Copy room ID
@@ -307,12 +291,14 @@
 
 
 //No Reload + No Change
-//Base: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 00 00 00 00 80 ?? ?? ?? ??
-//Offset: 41 8b 96 ? ? ? ? 49 8b ce ff 90 ? ? ? ? 84 c0 0f 84 ? ? ? ? 49 8b 06
+//Base: 48 8b 05 ? ? ? ? ba ? ? ? ? 48 8b 88 ? ? ? ? 48 8b 01 ff 90 ? ? ? ? 40 0f b6 d7
+//Offset 1: 48 8b 05 ? ? ? ? 48 8b 88 ? ? ? ? 48 85 c9 74 ? 48 8b 01 ff 90 ? ? ? ? 83 3d
+//Offset 2: 41 8b 96 ? ? ? ? 49 8b ce ff 90 ? ? ? ? 84 c0 0f 84 ? ? ? ? 49 8b 06
 //cshell_x64.dll+9A26EB - 41 8B 96 88080000     - mov edx,[r14+00000888]  ==> 0x888
 
-#define dwNR_NCBase 0x29F23F0
-#define dwNR_NCOffset 0x888
+#define dwNR_NCBase 0x296C550
+#define dwNR_NCOffset1 0x90
+#define dwNR_NCOffset2 0x888
 
 //State Check
 //Base: 48 8b 05 ? ? ? ? 48 8b e9 4c 8b b8
@@ -325,7 +311,7 @@
 //cshell_x64.dll + 14A4D24 - 48 8B 87 50020000 - mov rax, [rdi + 00000250]
 //cshell_x64.dll + 14A4D2B - 48 8B 88 90760000 - mov rcx, [rax + 00007690]
 //cshell_x64.dll + 14A4D32 - 48 8B 01 - mov rax, [rcx]
-//cshell_x64.dll + 14A4D35 - 33 D2 - xor edx, edx
+//cshell_x64.dll + 14A4D35 - 33 D2 - skCrypt edx, edx
 
 #define dwStateBase 0x27634E8
 #define dwStateOffset 0x270
@@ -382,15 +368,14 @@
 
 //CharacterFunc
 //48 8b 15 ? ? ? ? 48 23 0d
-//cshell_x64.WebView::CFWebView::GetData+3FF9 - 48 8B 15 A86C9302     - mov rdx,[cshell_x64.dll+2A61DE8] { (260265BAA60) }
+//cshell_x64.WebView::CFWebView::GetData+3FF9 - 48 8B 15 A86C9302     - mov rdx,[cshell_x64.dll+2A61DE8] { (260265BAA60) }  ==> 0x2A61DE8
 //cshell_x64.WebView::CFWebView::GetData+4000 - 48 23 0D B96C9302     - and rcx,[cshell_x64.dll+2A61E00] { (7) }
 //cshell_x64.WebView::CFWebView::GetData+4317 - 48 8B 15 CA699302     - mov rdx,[cshell_x64.dll+2A61E28] { (260265BACA0) }
 //cshell_x64.WebView::CFWebView::GetData + 431E - 48 23 0D DB699302 - and rcx, [cshell_x64.dll + 2A61E40] { (7) }
 
-#define dwCharacterFunc 0x2A61DE8
+#define dwCharacterFunc 0x2BD2CC8
 
-
-//CFO
+//CFVN
 //  //48 8b 05 ? ? ? ? ba ? ? ? ? 48 8b 88 ? ? ? ? 48 8b 01 ff 90 ? ? ? ? 40 0f b6 d7
 //  /*
 //	cshell_x64.dll+795D30 - 48 8B 05 61272102     - mov rax,[cshell_x64.dll+29A8498] { (7FF8064F07F0) }  ==> 0x29A8498
@@ -406,7 +391,7 @@
 //	cshell_x64.dll+795D61 - 5F                    - pop rdi
 //
 //  */
-#define LTShell						0x29A8498
+#define LTShell						0x296C550
 
 //  //48 69 c8 ? ? ? ? 0f 29 b4 24 ? ? ? ? 48 8b 05
 //
@@ -420,7 +405,7 @@
 //  */
 //  const DWORD ENT_BEGIN = 0x280;
 
-#define ENT_BEGIN					0x280
+#define ENT_BEGIN					0x288
 
 //  //4d 85 c0 74 ? 41 8b 80 ? ? ? ? 89 02
 //  /*
@@ -432,8 +417,7 @@
 //  */
 //  const DWORD ENT_SIZE = 0xDC8;
 
-#define ENT_SIZE					0xDC8
-
+#define ENT_SIZE					0x2080
 
 //48 8b 05 ? ? ? ? 48 8b 88 ? ? ? ? 48 85 c9 74 ? 48 8b 01 ff 90 ? ? ? ? 83 3d
 /*
@@ -445,23 +429,24 @@
 #define LOCAL_ENT					0x90
 
 //4c 8b 35 ? ? ? ? 48 89 4d
-/*
-	cshell_x64.dll+125CA22 - 4C 8B 35 B7E35901     - mov r14,[cshell_x64.dll+27FADE0] { (7FF861D52360) }
-	cshell_x64.dll+125CA29 - 48 89 4D A0           - mov [rbp-60],rcx
-	cshell_x64.dll+125CA2D - 41 0FB6 86 81020000   - movzx eax,byte ptr [r14+00000281]
-	cshell_x64.dll+125CA35 - 4C 69 F8 80200000     - imul r15,rax,00002080 { 8320 }
-	cshell_x64.dll+125CA3C - 89 44 24 70           - mov [rsp+70],eax
-*/
-#define LOCAL_ENT_INDEX				0x279
+//cshell_x64.dll + 12DC132 - 4C 8B 35 5FC36C01 - mov r14, [cshell_x64.dll + 29A8498] { (7FF8F19A07F0) }
+//cshell_x64.dll + 12DC139 - 48 89 4D A0 - mov[rbp - 60], rcx
+//cshell_x64.dll + 12DC13D - 41 0FB6 86 79020000 - movzx eax, byte ptr[r14 + 00000279]  ==> 0x279
+//cshell_x64.dll + 12DC145 - 4C 69 F8 C80D0000 - imul r15, rax, 00000DC8{ 3528 }
+
+#define LOCAL_ENT_INDEX				0x281
 
 
-//cshell_x64.dll + BDB053 - 8B 15 ABCEDC01 - mov edx, [cshell_x64.dll + 29A7F04] { (8) }
- 
-#define CFO_InGameState 0x29A7F04
-
-
-
-////CFVN
+////CFO
+////8b 15 ? ? ? ? ff 90 ? ? ? ? f6 05
+////cshell_x64.dll+BDB053 - 8B 15 ABCEDC01        - mov edx,[cshell_x64.dll+29A7F04] { (0) }
+//#define dwGameStatus				0x29A7F04
+//
+////00 00 80 BF ?? ?? ?? ?? ?? 99 99 BF ?? ?? ?? ?? 80 8A ?? ?? ?? ?? ?? BF ?? ?? ?? ??
+////cshell_x64.dll + 23A1504 - 00 00 - add[rax], al
+//#define dwRecoil					0x23A1504 
+//
+//
 ////  //48 8b 05 ? ? ? ? ba ? ? ? ? 48 8b 88 ? ? ? ? 48 8b 01 ff 90 ? ? ? ? 40 0f b6 d7
 ////  /*
 ////	cshell_x64.dll+795D30 - 48 8B 05 61272102     - mov rax,[cshell_x64.dll+29A8498] { (7FF8064F07F0) }  ==> 0x29A8498
@@ -477,7 +462,7 @@
 ////	cshell_x64.dll+795D61 - 5F                    - pop rdi
 ////
 ////  */
-//#define LTShell						0x27FADE0
+//#define LTShell						0x29A8498
 //
 ////  //48 69 c8 ? ? ? ? 0f 29 b4 24 ? ? ? ? 48 8b 05
 ////
@@ -491,7 +476,7 @@
 ////  */
 ////  const DWORD ENT_BEGIN = 0x280;
 //
-//#define ENT_BEGIN					0x288
+//#define ENT_BEGIN					0x280
 //
 ////  //4d 85 c0 74 ? 41 8b 80 ? ? ? ? 89 02
 ////  /*
@@ -503,33 +488,17 @@
 ////  */
 ////  const DWORD ENT_SIZE = 0xDC8;
 //
-//#define ENT_SIZE					0x2080
-//
-////48 8b 05 ? ? ? ? 48 8b 88 ? ? ? ? 48 85 c9 74 ? 48 8b 01 ff 90 ? ? ? ? 83 3d
-///*
-//	cshell_x64.dll+14B807E - 48 8B 05 13044F01     - mov rax,[cshell_x64.dll+29A8498] { (7FF8F19A07F0) }
-//	shell_x64.dll+14B8085 - 48 8B 88 90000000     - mov rcx,[rax+00000090]
-//	cshell_x64.dll+14B808C - 48 85 C9              - test rcx,rcx
-//*/
+//#define ENT_SIZE					0xDC8
 //
 //#define LOCAL_ENT					0x90
 //
-////4c 8b 35 ? ? ? ? 48 89 4d
-////cshell_x64.dll + 12DC132 - 4C 8B 35 5FC36C01 - mov r14, [cshell_x64.dll + 29A8498] { (7FF8F19A07F0) }
-////cshell_x64.dll + 12DC139 - 48 89 4D A0 - mov[rbp - 60], rcx
-////cshell_x64.dll + 12DC13D - 41 0FB6 86 79020000 - movzx eax, byte ptr[r14 + 00000279]  ==> 0x279
-////cshell_x64.dll + 12DC145 - 4C 69 F8 C80D0000 - imul r15, rax, 00000DC8{ 3528 }
-//
-//#define LOCAL_ENT_INDEX				0x281
+//#define LOCAL_ENT_INDEX				0x279
+
 
 //class CPlayer
 //{
 //public:
-//	union//0x0 // size 0xDC8
-//	{
-//		cLTObject* Object;
-//		HOBJECT* GetcObject;
-//	};
+//		
 //		char ClientID;			0x8
 //		char Team;				0x9
 //		char _Name[12];			0xA
@@ -549,15 +518,51 @@
 //		__int32 Ping;			0x56
 //};
 
+//48 8b 05 ? ? ? ? 48 85 c0 75 ? b9 ? ? ? ? e8 ? ? ? ? 45 33 c0
+//unpacked_crossfire.WebView::CFWebView::GetData + 1A4 - 48 8B 05 3539F400 - mov rax, [unpacked_crossfire.dat + 10B2AE0] { (0) }  ==> 10B2AE0
+//unpacked_crossfire.WebView::CFWebView::GetData + 1AB - 48 85 C0 - test rax, rax
+//unpacked_crossfire.WebView::CFWebView::GetData + 1AE - 75 76 - jne unpacked_crossfire.WebView::CFWebView::GetData + 226
 
-//CFVN
-// 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4
-//cshell_x64.WebView::CFWebArgument::operator=+344E - 49 69 D5 2C080000     - imul rdx,r13,0000082C { 2092 }
-// 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4
-//cshell_x64.WebView::CFWebArgument::operator=+3455 - 48 8B 0D 3C9C6B02     - mov rcx,[cshell_x64.dll+27FA2D8] { (0) }
-//89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? 4b 8b 1c f4
-//cshell_x64.WebView::CFWebArgument::operator=+345C - 89 84 0A DC070000     - mov [rdx+rcx+000007DC],eax
-//89 84 0a ? ? ? ? 4b 8b 1c f4 48 8d 15 ? ? ? ? 48 8b cb e8 ? ? ? ? 48 85 c0 74 ? 48 8b 40 ? 48 8b 48 ? 48 8b 49 ? ff 15 ? ? ? ? 49 69 d5 ? ? ? ? 48 8b 0d ? ? ? ? 89 84 0a ? ? ? ? ff 05
-//cshell_x64.WebView::CFWebArgument::operator=+349B - 89 84 0A E0070000     - mov [rdx+rcx+000007E0],eax
-//89 84 0a ? ? ? ? ff 05
-//cshell_x64.WebView::CFWebArgument::operator=+34DA - 89 84 0A E4070000     - mov [rdx+rcx+000007E4],eax
+#define dwCFTTable 0x10B2AE0
+
+//00 00 7a ? 00 00 7f
+//cshell_x64.dll + 236B4EC - 00 00 - add[rax], al  ==> 236B4EC
+//cshell_x64.dll + 236B4EE - 7A 44 - jp cshell_x64.dll + 236B534
+//cshell_x64.dll + 236B4F0 - 00 00 - add[rax], al
+
+#define dwFastGun 0x236B4EC
+
+//48 8B 3D ?? ?? ?? ?? F3 0F 11 4C 3E 38 F3 0F 11 4C 3E 3C F3 0F 11 4C 3E 40
+//CShell_x64.dll + 187586 - 48 8B 3D EB287E02 - mov rdi, [CShell_x64.dll + 2969E78] { (0) }
+//CShell_x64.dll + 18758D - F3 0F11 4C 3E 38 - movss[rsi + rdi + 38], xmm1
+//CShell_x64.dll + 187593 - F3 0F11 4C 3E 3C - movss[rsi + rdi + 3C], xmm1
+//CShell_x64.dll + 187599 - F3 0F11 4C 3E 40 - movss[rsi + rdi + 40], xmm1
+#define dwModelBute 0x2969E78
+
+struct Netvars {
+	DWORD64 InGameStatus;
+	DWORD64 NoBugDamage;
+	DWORD64 NoRecoil;
+	DWORD64 ThirdPerson_Base;
+	DWORD64 ThirdPerson_Offset;
+	DWORD64 Coordinate_Base;
+	DWORD64 Coordinate_Offset1;
+	DWORD64 Coordinate_Offset2;
+	DWORD64 Coordinate_Offset3;
+	DWORD64 CharacterFunc;
+	DWORD64 CFTTable;
+	DWORD64 dwLTShell;
+	DWORD64 dwENT_BEGIN;
+	DWORD64 dwENT_SIZE;
+	DWORD64 dwLOCAL_ENT_INDEX;
+	DWORD64 FastGun;
+	DWORD64 CopyRoomBase;
+	DWORD64 CopyRoomOffset1;
+	DWORD64 CopyRoomOffset2;
+	DWORD64 SkillE_Base;
+	DWORD64 SkillE_Offset;
+	DWORD64 ModelBute;
+	DWORD64 NR_NCBase;
+	DWORD64 NR_NCOffset1;
+	DWORD64 NR_NCOffset2;
+}nv;
