@@ -69,7 +69,7 @@ template<typename ... A>
 uint64_t call_hook(const A ... arguments)
 {
 	std::call_once(flag, [] { LoadLibraryA(RGS("user32.dll")); });
-	void* control_function = GetProcAddress(LoadLibraryA(RGS("win32u.dll")), RGS("NtOpenCompositionSurfaceSectionInfo"));
+	void* control_function = GetProcAddress(LoadLibraryA(RGS("win32u.dll")), RGS("NtDxgkGetTrackedWorkloadStatistics"));
 	const auto control = static_cast<uint64_t(__stdcall*)(A...)>(control_function);
 	return control(arguments ...);
 }
@@ -247,34 +247,15 @@ bool draw_text(int x, int y, LPCSTR string, UINT len) {
 
 //Game Function
 void NoBugDamage() {
-	changeProtection(pid,CShell_x64.baseAddr + nv.NoBugDamage, 19, PAGE_EXECUTE_READWRITE);
+	changeProtection(pid, CShell_x64.baseAddr + nv.NoBugDamage, 19, PAGE_EXECUTE_READWRITE);
 	BYTE writeBuffer[] = { 0x72,0x65,0x7A,0x5C,0x42,0x75,0x74,0x65,0x73,0x5C,0x42,0x46,0x30,0x33,0x35 };
 	writeBytes(CShell_x64.baseAddr + nv.NoBugDamage, &writeBuffer, sizeof(writeBuffer));
 	changeProtection(pid, CShell_x64.baseAddr + nv.NoBugDamage, 19, 0);
 }
 
-void chacFunc() {
-	uintptr_t CharacterFuncBase = read<uintptr_t>(CShell_x64.baseAddr + nv.CharacterFunc);
-	for (int i = 0; i <= 511; i++) {
-		uintptr_t p1 = read<uintptr_t>(CharacterFuncBase + (i * 8));
-		uintptr_t p2 = read<uintptr_t>(p1 + 0x0);
-		uintptr_t p3 = read<uintptr_t>(p2 + 0x18);
-		uintptr_t p4 = read<uintptr_t>(p3 + 0x0);
-		write<int>(p4 + 0xD08, 12545); //Mua Quat + Giam Smoke
-	}
-
-	uintptr_t CFTTableManager = read<uintptr_t>(crossfire.baseAddr + nv.CFTTable);
-	uintptr_t CharacterFunc = read<uintptr_t>(CFTTableManager + 0x438);
-	uintptr_t ListData = read<uintptr_t>(CharacterFunc + 0x10);
-	uintptr_t rowData = read<uintptr_t>(ListData);
-	write<float>(rowData + 0x1C, 70); //Giam 80% Smoke
-
-}
-
 void SupportFunction() {
 	float oldx = 0, oldy = 0, oldz = 0;
 	bool isSecondPerson = false;
-	bool isNC_NR = false;
 	int roomid = 0;
 
 	uintptr_t thirdPerson_Base = read<uintptr_t>(CShell_x64.baseAddr + nv.ThirdPerson_Base);
@@ -370,20 +351,6 @@ void SupportFunction() {
 					}
 				}
 			}
-
-
-			if (inGameStatus == 11) {
-				if (GetAsyncKeyState(VK_LBUTTON)) {
-					DWORD oldProt = changeProtection(pid, CShell_x64.baseAddr + nv.NoRecoil, 1, PAGE_EXECUTE_READWRITE);
-					write<float>(CShell_x64.baseAddr + nv.NoRecoil, 0.0f);
-					changeProtection(pid, CShell_x64.baseAddr + nv.NoRecoil, 1, oldProt);
-				}
-				else {
-					DWORD oldProt = changeProtection(pid, CShell_x64.baseAddr + nv.NoRecoil, 1, PAGE_EXECUTE_READWRITE);
-					write<float>(CShell_x64.baseAddr + nv.NoRecoil, -1.0f);
-					changeProtection(pid, CShell_x64.baseAddr + nv.NoRecoil, 1, oldProt);
-				}
-			}
 			NoBugDamage();
 		} else {
 			Beep(300, 500);
@@ -407,9 +374,6 @@ void pressK() {
 #else
 	#define log(name, addr)
 #endif // DEBUG
-
-
-
 
 class FindPattern
 {
@@ -618,40 +582,42 @@ bool Prepare() {
 			nv.NR_NCOffset2 = read<DWORD>(nv.NR_NCOffset2 + 0x3);
 			log(RGS("dwNR_NCOffset2"), nv.NR_NCOffset2);
 		}
+
+		nv.dwSpamRadio = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x0f\xb6\x0d\x00\x00\x00\x00\x3d", "000????0").Base;
+		if (nv.dwSpamRadio) {
+			DWORD offset = read<DWORD>(nv.dwSpamRadio + 0x3);
+			nv.dwSpamRadio = nv.dwSpamRadio + offset + 0x7;
+			nv.dwSpamRadio -= CShell_x64.baseAddr;
+			log(RGS("dwSpamRadio"), nv.dwSpamRadio);
+		}
 		Beep(300, 500);
 		isgetaddress = true;
 	}
 	return 1;
 }
 
+
 __CODERDUC__{
 	setup();
 	Sleep(1000);
-
+	
 	if (!pid && !crossfire.baseAddr && !CShell_x64.baseAddr && !ClientFx_x64.baseAddr) {
 		pid = get_process_id(RGS("crossfire.exe"));
 		crossfire = get_module_base_addr(RGS("crossfire.exe"));
 		CShell_x64 = get_module_base_addr(RGS("cshell_x64.dll"));
 		ClientFx_x64 = get_module_base_addr(RGS("ClientFx_x64.fxd"));
 	}
-	std::cout << R"( 
-  ________    _____     ________.__  .__  __         .__
- /  _____/   /  |  |   /  _____/|  | |__|/  |_  ____ |  |__   ___________
-/   \  ___  /   |  |_ /   \  ___|  | |  \   __\/ ___\|  |  \_/ __ \_  __ \
-\    \_\  \/    ^   / \    \_\  \  |_|  ||  | \  \___|   Y  \  ___/|  | \/
- \______  /\____   |   \______  /____/__||__|  \___  >___|  /\___  >__|
-		\/      |__|          \/                   \/     \/     \/
-)" << '\n';
-	CheckPoint = VK_F2;
-	ReturnCheckPoint = VK_F3;
-	SecondPerson = 'V';
-	CopyRoomID = VK_F4;
-	PasteRoomID = VK_F5;
-	SkillE = VK_SHIFT;
 	Prepare();
-	chacFunc();
-	SupportFunction();
-	Prepare();
+	////FreeConsole();
+
+	//SkillE = VK_SHIFT;
+	//CheckPoint = VK_NUMPAD1;
+	//ReturnCheckPoint = VK_NUMPAD2;
+	//CopyRoomID = VK_F3;
+	//PasteRoomID = VK_F4;
+	//SecondPerson = 'V';
+	//SupportFunction();
+
 	system(RGS("pause"));
 	return 0;
 }
