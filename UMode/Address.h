@@ -565,4 +565,8 @@ struct Netvars {
 	DWORD64 NR_NCBase;
 	DWORD64 NR_NCOffset1;
 	DWORD64 NR_NCOffset2;
+	DWORD64 dwSpamRadio;
 }nv;
+
+//WeaponMgr
+//48 8b 15 ? ? ? ? ff c3 49 8b c0 48 2b c2 8b cb 48 c1 f8 ? 48 3b c8 72 ? 0f b6 0d
