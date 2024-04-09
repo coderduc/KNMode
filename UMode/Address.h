@@ -566,6 +566,7 @@ struct Netvars {
 	DWORD64 NR_NCOffset1;
 	DWORD64 NR_NCOffset2;
 	DWORD64 dwSpamRadio;
+	DWORD64 ShiftSpeedOffset;
 }nv;
 
 //WeaponMgr
