@@ -436,17 +436,24 @@ bool Prepare() {
 			log(RGS("dwNoRecoil"), nv.NoRecoil);
 		}
 
-		
-		nv.ThirdPerson_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x00\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x43\x00\x00", "????00000000?0000000000000").Base;
+		nv.ThirdPerson_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\x44\x0f\x29\x5c\x24", "000????00000").Base;
 		if (nv.ThirdPerson_Base) {
+			DWORD offset = read<DWORD>(nv.ThirdPerson_Base + 0x3);
+			nv.ThirdPerson_Base = nv.ThirdPerson_Base + offset + 0x7;
 			nv.ThirdPerson_Base -= CShell_x64.baseAddr;
 			log(RGS("dwThirdPerson_Base"), nv.ThirdPerson_Base);
 		}
 		
-		nv.ThirdPerson_Offset = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x8B\x83\x00\x00\x00\x00\x48\x83\xC4\x00\x5B\xC3\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\x48\x89\x5C\x24\x00", "00????000?0000000000000000?").Base;
-		if (nv.ThirdPerson_Offset) {
-			nv.ThirdPerson_Offset = read<DWORD>(nv.ThirdPerson_Offset + 0x2);
-			log(RGS("dwThirdPerson_Offset"), nv.ThirdPerson_Offset);
+		nv.ThirdPerson_Offset1 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x49\x8b\x4f\x00\x48\x8b\x01\xff\x90\x00\x00\x00\x00\x83\xf8\x00\x75\x00\x48\x8b\x05", "000?00000????00?0?000").Base;
+		if (nv.ThirdPerson_Offset1) {
+			nv.ThirdPerson_Offset1 = read<BYTE>(nv.ThirdPerson_Offset1 + 0x3);
+			log(RGS("dwThirdPerson_Offset1"), nv.ThirdPerson_Offset1);
+		}
+
+		nv.ThirdPerson_Offset2 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x8B\x83\x00\x00\x00\x00\x48\x83\xC4\x00\x5B\xC3\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\x48\x89\x5C\x24\x00", "00????000?0000000000000000?").Base;
+		if (nv.ThirdPerson_Offset2) {
+			nv.ThirdPerson_Offset2 = read<DWORD>(nv.ThirdPerson_Offset2 + 0x2);
+			log(RGS("dwThirdPerson_Offset2"), nv.ThirdPerson_Offset2);
 		}
 
 		nv.Coordinate_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\x44\x0f\x29\x5c\x24", "000????00000").Base;
