@@ -544,7 +544,8 @@ struct Netvars {
 	DWORD64 NoBugDamage;
 	DWORD64 NoRecoil;
 	DWORD64 ThirdPerson_Base;
-	DWORD64 ThirdPerson_Offset;
+	DWORD64 ThirdPerson_Offset1;
+	DWORD64 ThirdPerson_Offset2;
 	DWORD64 Coordinate_Base;
 	DWORD64 Coordinate_Offset1;
 	DWORD64 Coordinate_Offset2;
