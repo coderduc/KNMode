@@ -568,6 +568,20 @@ struct Netvars {
 	DWORD64 NR_NCOffset2;
 	DWORD64 dwSpamRadio;
 	DWORD64 ShiftSpeedOffset;
+	DWORD64 dwmatrix;
+	DWORD64 dwViewAngle;
+	DWORD64 NoRecoilOffset;
+	DWORD64 ModelDBOffset;
+	DWORD64 CachedTransformOffset;
+	DWORD64 isDormant;
+	DWORD64 dwBP31_9_1;
+	DWORD64 dwBP31_9_2;
+	DWORD64 dwBP31_9_3;
+	DWORD64 dwBP31_9_4;
+	DWORD64 dwBP31_9_5;
+	DWORD64 dwBP31_10_1;
+	DWORD64 dwBP31_10_2;
+	DWORD64 dwBP31_10_3;
 }nv;
 
 //WeaponMgr
