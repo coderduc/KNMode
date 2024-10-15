@@ -419,7 +419,7 @@ bool Prepare() {
 			DWORD offset = read<DWORD>(nv.InGameStatus + 0x2);
 			nv.InGameStatus = nv.InGameStatus + offset + 0x6;
 			nv.InGameStatus -= CShell_x64.baseAddr;
-			log(RGS("dwInGameStatus"), nv.InGameStatus);
+			log(skCrypt("dwInGameStatus"), nv.InGameStatus);
 		}
 
 		nv.NoBugDamage = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8d\x15\x00\x00\x00\x00\x48\x8d\x4c\x24\x00\xe8\x00\x00\x00\x00\x4c\x8d\x44\x24\x00\xba\x00\x00\x00\x00\x48\x8d\x8f", "000????0000?0????0000?0????000").Base;
@@ -427,13 +427,13 @@ bool Prepare() {
 			DWORD offset = read<DWORD>(nv.NoBugDamage + 0x3);
 			nv.NoBugDamage = nv.NoBugDamage + offset + 0x7;
 			nv.NoBugDamage -= CShell_x64.baseAddr;
-			log(RGS("dwNoBugDamage"), nv.NoBugDamage);
+			log(skCrypt("dwNoBugDamage"), nv.NoBugDamage);
 		}
 
 		nv.NoRecoil = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x80\xBF\x00\x00\x00\x00\x00\x99\x99\xBF\x00\x00\x00\x00\x80\x8A\x00\x00\x00\x00\x00\xBF\x00\x00\x00\x00", "0000?????000????00?????0????").Base;
 		if (nv.NoRecoil) {
 			nv.NoRecoil -= CShell_x64.baseAddr;
-			log(RGS("dwNoRecoil"), nv.NoRecoil);
+			log(skCrypt("dwNoRecoil"), nv.NoRecoil);
 		}
 
 		nv.ThirdPerson_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\x44\x0f\x29\x5c\x24", "000????00000").Base;
@@ -441,19 +441,19 @@ bool Prepare() {
 			DWORD offset = read<DWORD>(nv.ThirdPerson_Base + 0x3);
 			nv.ThirdPerson_Base = nv.ThirdPerson_Base + offset + 0x7;
 			nv.ThirdPerson_Base -= CShell_x64.baseAddr;
-			log(RGS("dwThirdPerson_Base"), nv.ThirdPerson_Base);
+			log(skCrypt("dwThirdPerson_Base"), nv.ThirdPerson_Base);
 		}
-		
+
 		nv.ThirdPerson_Offset1 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x49\x8b\x4f\x00\x48\x8b\x01\xff\x90\x00\x00\x00\x00\x83\xf8\x00\x75\x00\x48\x8b\x05", "000?00000????00?0?000").Base;
 		if (nv.ThirdPerson_Offset1) {
 			nv.ThirdPerson_Offset1 = read<BYTE>(nv.ThirdPerson_Offset1 + 0x3);
-			log(RGS("dwThirdPerson_Offset1"), nv.ThirdPerson_Offset1);
+			log(skCrypt("dwThirdPerson_Offset1"), nv.ThirdPerson_Offset1);
 		}
 
 		nv.ThirdPerson_Offset2 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x8B\x83\x00\x00\x00\x00\x48\x83\xC4\x00\x5B\xC3\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\x48\x89\x5C\x24\x00", "00????000?0000000000000000?").Base;
 		if (nv.ThirdPerson_Offset2) {
 			nv.ThirdPerson_Offset2 = read<DWORD>(nv.ThirdPerson_Offset2 + 0x2);
-			log(RGS("dwThirdPerson_Offset2"), nv.ThirdPerson_Offset2);
+			log(skCrypt("dwThirdPerson_Offset2"), nv.ThirdPerson_Offset2);
 		}
 
 		nv.Coordinate_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\x44\x0f\x29\x5c\x24", "000????00000").Base;
@@ -461,33 +461,33 @@ bool Prepare() {
 			DWORD offset = read<DWORD>(nv.Coordinate_Base + 0x3);
 			nv.Coordinate_Base = nv.Coordinate_Base + offset + 0x7;
 			nv.Coordinate_Base -= CShell_x64.baseAddr;
-			log(RGS("dwCoordinate_Base"), nv.Coordinate_Base);
+			log(skCrypt("dwCoordinate_Base"), nv.Coordinate_Base);
 		}
 
 		nv.Coordinate_Offset1 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\xb0\x00\x00\x00\x00\xc6\x41", "000????00").Base;
 		if (nv.Coordinate_Offset1) {
 			nv.Coordinate_Offset1 = read<DWORD>(nv.Coordinate_Offset1 + 0x3);
-			log(RGS("dwCoordinate_Offset1"), nv.Coordinate_Offset1);
+			log(skCrypt("dwCoordinate_Offset1"), nv.Coordinate_Offset1);
 		}
 
 		nv.Coordinate_Offset2 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x4c\x8b\xb6\x00\x00\x00\x00\x48\x8b\x18", "000????000").Base;
 		if (nv.Coordinate_Offset2) {
 			nv.Coordinate_Offset2 = read<DWORD>(nv.Coordinate_Offset2 + 0x3);
-			log(RGS("dwCoordinate_Offset2"), nv.Coordinate_Offset2);
+			log(skCrypt("dwCoordinate_Offset2"), nv.Coordinate_Offset2);
 		}
 
 		nv.Coordinate_Offset3 = FindPattern::FindPattern((DWORD64)crossfire.baseAddr, (DWORD64)crossfire.sizeDll, (PBYTE)"\xf3\x44\x0f\x10\x8f\x00\x00\x00\x00\x41\x0f\x28\xfa", "00000????0000").Base;
 		if (nv.Coordinate_Offset3) {
 			nv.Coordinate_Offset3 = read<DWORD>(nv.Coordinate_Offset3 + 0x5);
-			log(RGS("dwCoordinate_Offset3"), nv.Coordinate_Offset3);
+			log(skCrypt("dwCoordinate_Offset3"), nv.Coordinate_Offset3);
 		}
-		
+
 		nv.CharacterFunc = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x15\x00\x00\x00\x00\x48\x23\x0d", "000????000").Base;
 		if (nv.CharacterFunc) {
 			DWORD offset = read<DWORD>(nv.CharacterFunc + 0x3);
 			nv.CharacterFunc = nv.CharacterFunc + offset + 0x7;
 			nv.CharacterFunc -= CShell_x64.baseAddr;
-			log(RGS("dwCharacterFunc"), nv.CharacterFunc);
+			log(skCrypt("dwCharacterFunc"), nv.CharacterFunc);
 		}
 
 		nv.CFTTable = FindPattern::FindPattern((DWORD64)crossfire.baseAddr, (DWORD64)crossfire.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\x48\x85\xc0\x75\x00\xb9\x00\x00\x00\x00\xe8\x00\x00\x00\x00\x45\x33\xc0", "000????0000?0????0????000").Base;
@@ -495,7 +495,7 @@ bool Prepare() {
 			DWORD offset = read<DWORD>(nv.CFTTable + 0x3);
 			nv.CFTTable = nv.CFTTable + offset + 0x7;
 			nv.CFTTable -= crossfire.baseAddr;
-			log(RGS("dwCFTTable"), nv.CFTTable);
+			log(skCrypt("dwCFTTable"), nv.CFTTable);
 		}
 
 		nv.dwLTShell = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\xba\x00\x00\x00\x00\x48\x8b\x88\x00\x00\x00\x00\x48\x8b\x01\xff\x90\x00\x00\x00\x00\x40\x0f\xb6\xd7", "000????0????000????00000????0000").Base;
@@ -503,31 +503,31 @@ bool Prepare() {
 			DWORD offset = read<DWORD>(nv.dwLTShell + 0x3);
 			nv.dwLTShell = nv.dwLTShell + offset + 0x7;
 			nv.dwLTShell -= CShell_x64.baseAddr;
-			log(RGS("dwLTShell"), nv.dwLTShell);
+			log(skCrypt("dwLTShell"), nv.dwLTShell);
 		}
 
 		nv.dwENT_BEGIN = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x4c\x8b\xbc\x39\x00\x00\x00\x00\x48\x85\xc0", "0000????000").Base;
 		if (nv.dwENT_BEGIN) {
 			nv.dwENT_BEGIN = read<DWORD>(nv.dwENT_BEGIN + 0x4);
-			log(RGS("dwENT_BEGIN"), nv.dwENT_BEGIN);
+			log(skCrypt("dwENT_BEGIN"), nv.dwENT_BEGIN);
 		}
 
 		nv.dwENT_SIZE = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x69\xc8\x00\x00\x00\x00\x0f\x29\xb4\x24\x00\x00\x00\x00\x48\x8b\x05", "000????0000????000").Base;
 		if (nv.dwENT_SIZE) {
 			nv.dwENT_SIZE = read<DWORD>(nv.dwENT_SIZE + 0x3);
-			log(RGS("dwENT_SIZE"), nv.dwENT_SIZE);
+			log(skCrypt("dwENT_SIZE"), nv.dwENT_SIZE);
 		}
 
 		nv.dwLOCAL_ENT_INDEX = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x41\x0f\xb6\x86\x00\x00\x00\x00\x4c\x69\xf8", "0000????000").Base;
 		if (nv.dwLOCAL_ENT_INDEX) {
 			nv.dwLOCAL_ENT_INDEX = read<DWORD>(nv.dwLOCAL_ENT_INDEX + 0x4);
-			log(RGS("dwLOCAL_ENT_INDEX"), nv.dwLOCAL_ENT_INDEX);
+			log(skCrypt("dwLOCAL_ENT_INDEX"), nv.dwLOCAL_ENT_INDEX);
 		}
-		
+
 		nv.FastGun = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x7a\x00\x00\x00\x7f", "000?000").Base;
 		if (nv.FastGun) {
 			nv.FastGun -= CShell_x64.baseAddr;
-			log(RGS("dwFastGun"), nv.FastGun);
+			log(skCrypt("dwFastGun"), nv.FastGun);
 		}
 
 		nv.CopyRoomBase = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8B\x00\x00\x00\x00\x00\x48\x00\x00\x75\x1F\xB9\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x48\x89\x44\x24\x00\x48\x8B\xC8\xE8\x00\x00\x00\x00\x90\x48\x89\x00\x00\x00\x00\x00\x48\x83\xC4\x00\xC3\xCC\xCC\xCC\x41\x56", "00?????0??000????0????0000?0000????000?????000?000000").Base;
@@ -535,31 +535,31 @@ bool Prepare() {
 			DWORD offset = read<DWORD>(nv.CopyRoomBase + 0x3);
 			nv.CopyRoomBase = nv.CopyRoomBase + offset + 0x7;
 			nv.CopyRoomBase -= CShell_x64.baseAddr;
-			log(RGS("dwCopyRoomBase"), nv.CopyRoomBase);
+			log(skCrypt("dwCopyRoomBase"), nv.CopyRoomBase);
 		}
 
 		nv.CopyRoomOffset1 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x40\x00\x8b\x88\x00\x00\x00\x00\x83\xf9\x00\x75", "000?00????00?0").Base;
 		if (nv.CopyRoomOffset1) {
 			nv.CopyRoomOffset1 = read<BYTE>(nv.CopyRoomOffset1 + 0x3);
-			log(RGS("dwCopyRoomOffset1"), nv.CopyRoomOffset1);
+			log(skCrypt("dwCopyRoomOffset1"), nv.CopyRoomOffset1);
 		}
 
 		nv.CopyRoomOffset2 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x89\x8B\x00\x00\x00\x00\x4C\x8D\xBB\x00\x00\x00\x00\x41\x8B\x3F", "000????000????000").Base;
 		if (nv.CopyRoomOffset2) {
 			nv.CopyRoomOffset2 = read<DWORD>(nv.CopyRoomOffset2 + 0x3);
-			log(RGS("dwCopyRoomOffset2"), nv.CopyRoomOffset2);
+			log(skCrypt("dwCopyRoomOffset2"), nv.CopyRoomOffset2);
 		}
 
 		nv.SkillE_Base = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x80\xBB\x00\x00\x00\x00\x00", "0??????0?00000000000000?????").Base;
 		if (nv.SkillE_Base) {
 			nv.SkillE_Base -= CShell_x64.baseAddr;
-			log(RGS("dwSkillE_Base"), nv.SkillE_Base);
+			log(skCrypt("dwSkillE_Base"), nv.SkillE_Base);
 		}
 
 		nv.SkillE_Offset = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x8B\x81\x00\x00\x00\x00\x83\xF8\x00\x75\x03\xB0\x00\xC3", "00????00?000?0").Base;
 		if (nv.SkillE_Offset) {
 			nv.SkillE_Offset = read<DWORD>(nv.SkillE_Offset + 0x2);
-			log(RGS("dwSkillE_Offset"), nv.SkillE_Offset);
+			log(skCrypt("dwSkillE_Offset"), nv.SkillE_Offset);
 		}
 
 		nv.ModelBute = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8B\x3D\x00\x00\x00\x00\xF3\x0F\x11\x4C\x3E\x38\xF3\x0F\x11\x4C\x3E\x3C\xF3\x0F\x11\x4C\x3E\x40", "000????000000000000000000").Base;
@@ -567,7 +567,7 @@ bool Prepare() {
 			DWORD offset = read<DWORD>(nv.ModelBute + 0x3);
 			nv.ModelBute = nv.ModelBute + offset + 0x7;
 			nv.ModelBute -= CShell_x64.baseAddr;
-			log(RGS("dwModelBute"), nv.ModelBute);
+			log(skCrypt("dwModelBute"), nv.ModelBute);
 		}
 
 		nv.NR_NCBase = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\x05\x00\x00\x00\x00\xba\x00\x00\x00\x00\x48\x8b\x88\x00\x00\x00\x00\x48\x8b\x01\xff\x90\x00\x00\x00\x00\x40\x0f\xb6\xd7", "000????0????000????00000????0000").Base;
@@ -575,19 +575,19 @@ bool Prepare() {
 			DWORD offset = read<DWORD>(nv.NR_NCBase + 0x3);
 			nv.NR_NCBase = nv.NR_NCBase + offset + 0x7;
 			nv.NR_NCBase -= CShell_x64.baseAddr;
-			log(RGS("dwNR_NCBase"), nv.NR_NCBase);
+			log(skCrypt("dwNR_NCBase"), nv.NR_NCBase);
 		}
 
 		nv.NR_NCOffset1 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x48\x8b\xb0\x00\x00\x00\x00\xc6\x41", "000????00").Base;
 		if (nv.NR_NCOffset1) {
 			nv.NR_NCOffset1 = read<DWORD>(nv.NR_NCOffset1 + 0x3);
-			log(RGS("dwNR_NCOffset1"), nv.NR_NCOffset1);
+			log(skCrypt("dwNR_NCOffset1"), nv.NR_NCOffset1);
 		}
 
 		nv.NR_NCOffset2 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x41\x8b\x96\x00\x00\x00\x00\x49\x8b\xce\xff\x90\x00\x00\x00\x00\x84\xc0\x0f\x84\x00\x00\x00\x00\x49\x8b\x06", "000????00000????0000????000").Base;
 		if (nv.NR_NCOffset2) {
 			nv.NR_NCOffset2 = read<DWORD>(nv.NR_NCOffset2 + 0x3);
-			log(RGS("dwNR_NCOffset2"), nv.NR_NCOffset2);
+			log(skCrypt("dwNR_NCOffset2"), nv.NR_NCOffset2);
 		}
 
 		nv.dwSpamRadio = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x0f\xb6\x0d\x00\x00\x00\x00\x3d", "000????0").Base;
@@ -595,14 +595,104 @@ bool Prepare() {
 			DWORD offset = read<DWORD>(nv.dwSpamRadio + 0x3);
 			nv.dwSpamRadio = nv.dwSpamRadio + offset + 0x7;
 			nv.dwSpamRadio -= CShell_x64.baseAddr;
-			log(RGS("dwSpamRadio"), nv.dwSpamRadio);
+			log(skCrypt("dwSpamRadio"), nv.dwSpamRadio);
 		}
 
 		nv.ShiftSpeedOffset = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\xf3\x0f\x10\x83\x00\x00\x00\x00\xf3\x0f\x59\x41\x00\x48\x8b\xcb\x48\x8b\x03\xf3\x0f\x11\x45\x00\xff\x90\x00\x00\x00\x00\x8b\xc8\xe8\x00\x00\x00\x00\x48\x85\xc0\x0f\x84\x00\x00\x00\x00\x83\xb8\x00\x00\x00\x00\x00\x0f\x85\x00\x00\x00\x00\xe8\x00\x00\x00\x00\xf3\x0f\x10\x4d\x00\xf3\x0f\x59\xc8\xf3\x0f\x11\x4d\x00\xe9\x00\x00\x00\x00\x48\x8b\x03\x48\x8b\xcb\xff\x90\x00\x00\x00\x00\x83\xf8\x00\x75\x00\x39\xbb\x00\x00\x00\x00\x75\x00\x40\x38\xbb\x00\x00\x00\x00\x74\x00\x40\x38\xbb\x00\x00\x00\x00\x74\x00\x8b\x8b\x00\x00\x00\x00\xe8\x00\x00\x00\x00\x48\x8b\xcf\x48\x63\x90\x00\x00\x00\x00\x85\xd2\x78\x00\x8b\x05\x00\x00\x00\x00\xff\xc8\x3b\xd0\x7f\x00\x48\x69\xca\x00\x00\x00\x00\x48\x03\x0d\x00\x00\x00\x00\xf3\x0f\x10\x83\x00\x00\x00\x00\xf3\x0f\x59\x41\x00\xf3\x0f\x11\x45\x00\xeb\x00\x0f\x28\xc6", "0000????0000?0000000000?00????000????00000????00?????00????0????0000?00000000?0????00000000????00?0?00????0?000????0?000????0?00????0????000000????000?00????00000?000????000????0000????0000?0000?0?000").Base;
 		if (nv.ShiftSpeedOffset) {
 			nv.ShiftSpeedOffset = read<DWORD>(nv.ShiftSpeedOffset + 0x4);
-			log(RGS("dwShiftSpeedOffset"), nv.ShiftSpeedOffset);
+			log(skCrypt("dwShiftSpeedOffset"), nv.ShiftSpeedOffset);
 		}
+
+		nv.dwmatrix = FindPattern::FindPattern((DWORD64)crossfire.baseAddr, (DWORD64)crossfire.sizeDll, (PBYTE)"\x48\x8D\x15\x00\x00\x00\x00\xFF\x50\x20\x48\x8D\x0D\x00\x00\x00\x00\x48\x83\xC4\x30\x5B\xE9\x00\x00\x00\x00\xCC\xCC\xCC\xCC\xCC\x48\x8D\x0D\x00\x00\x00\x00", "000????000000????000000????00000000????").Base;
+		if (nv.dwmatrix) {
+			DWORD offset = read<DWORD>(nv.dwmatrix + 0x3);
+			nv.dwmatrix = nv.dwmatrix + offset + 0x7;
+			nv.dwmatrix -= crossfire.baseAddr;
+			nv.dwmatrix += 0x2CF0;
+			log(skCrypt("dwMatrix"), nv.dwmatrix);
+		}
+
+		nv.dwViewAngle = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\xf3\x0f\x10\x99\x00\x00\x00\x00\x0f\x28\xd0", "0000????000").Base;
+		if (nv.dwViewAngle) {
+			nv.dwViewAngle = read<DWORD>(nv.dwViewAngle + 0x4);
+			log(skCrypt("dwViewAngle"), nv.dwViewAngle);
+		}
+
+		nv.NoRecoilOffset = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\xF3\x0F\x11\x8F\x00\x00\x00\x00\x0F\x28\xD1\xF3\x0F\x11\x97", "0000????0000000").Base;
+		if (nv.NoRecoilOffset) {
+			nv.NoRecoilOffset = read<DWORD>(nv.NoRecoilOffset + 0x4);
+			log(skCrypt("NoRecoilOffset"), nv.NoRecoilOffset);
+		}
+
+		nv.ModelDBOffset = FindPattern::FindPattern((DWORD64)crossfire.baseAddr, (DWORD64)crossfire.sizeDll, (PBYTE)"\x48\x8b\x82\x00\x00\x00\x00\xf3\x0f\x10\x50", "000????0000").Base;
+		if (nv.ModelDBOffset) {
+			nv.ModelDBOffset = read<DWORD>(nv.ModelDBOffset + 0x3);
+			log(skCrypt("ModelDBOffset"), nv.ModelDBOffset);
+		}
+
+		nv.CachedTransformOffset = FindPattern::FindPattern((DWORD64)crossfire.baseAddr, (DWORD64)crossfire.sizeDll, (PBYTE)"\x48\x8b\x87\x00\x00\x00\x00\x48\xc1\xe6", "000????000").Base;
+		if (nv.CachedTransformOffset) {
+			nv.CachedTransformOffset = read<DWORD>(nv.CachedTransformOffset + 0x3);
+			log(skCrypt("CachedTransformOffset"), nv.CachedTransformOffset);
+		}
+
+		nv.isDormant = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x88\x1d\x00\x00\x00\x00\xe8\x00\x00\x00\x00\x88\x58\x00\x41\xba", "00????0????00?00").Base;
+		if (nv.isDormant) {
+			DWORD offset = read<DWORD>(nv.isDormant + 0x2);
+			nv.isDormant = nv.isDormant + offset + 0x6;
+			nv.isDormant -= CShell_x64.baseAddr;
+			log(skCrypt("isDormant"), nv.isDormant);
+		}
+
+		nv.dwBP31_9_1 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x75\x00\x0f\xb6\x05\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x88\x44\x24\x00\xfe\xc0\x88\x05\x00\x00\x00\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\x4c\x24\x00\xba\x00\x00\x00\x00\x48\x8b\x01\xff\x90\x00\x00\x00\x00\x48\x8b\x54\x24\x00\x48\x8d\x4c\x24\x00\xe8\x00\x00\x00\x00\x48\x8b\x05\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x48\x8b\x18\x48\x8b\x01\xff\x50\x00\x48\x8b\x0d\x00\x00\x00\x00\x41\xb8\x00\x00\x00\x00\x48\x8b\xd0\xff\x93\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\x8d\x00\x00\x00\x00\x48\x33\xcc\xe8\x00\x00\x00\x00\x48\x8b\x9c\x24\x00\x00\x00\x00\x48\x81\xc4\x00\x00\x00\x00\x5d\xc3\xcc\x48\x89\x5c\x24", "0?000????0000?000?0000????00000?0000?0????00000????0000?0000?0????000????0000?00000000?000????00????00000????0000?00000?000????0000????0000????000????0000000").Base;
+		if (nv.dwBP31_9_1) {
+			nv.dwBP31_9_1 -= CShell_x64.baseAddr;
+			log(skCrypt("dwBP31_9_1"), nv.dwBP31_9_1);
+		}
+
+		nv.dwBP31_9_2 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x75\x00\x0f\xb6\x05\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x88\x44\x24\x00\xfe\xc0\x88\x05\x00\x00\x00\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\x4c\x24\x00\xba\x00\x00\x00\x00\x48\x8b\x01\xff\x90\x00\x00\x00\x00\x48\x8b\x54\x24\x00\x48\x8d\x4c\x24\x00\xe8\x00\x00\x00\x00\x48\x8b\x05\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x48\x8b\x18\x48\x8b\x01\xff\x50\x00\x48\x8b\x0d\x00\x00\x00\x00\x41\xb8\x00\x00\x00\x00\x48\x8b\xd0\xff\x93\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\x8d\x00\x00\x00\x00\x48\x33\xcc\xe8\x00\x00\x00\x00\x48\x8b\x9c\x24\x00\x00\x00\x00\x48\x81\xc4\x00\x00\x00\x00\x5d\xc3\xcc\xcc", "0?000????0000?000?0000????00000?0000?0????00000????0000?0000?0????000????0000?00000000?000????00????00000????0000?00000?000????0000????0000????000????0000").Base;
+		if (nv.dwBP31_9_2) {
+			nv.dwBP31_9_2 -= CShell_x64.baseAddr;
+			log(skCrypt("dwBP31_9_2"), nv.dwBP31_9_2);
+		}
+
+		nv.dwBP31_9_3 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x75\x00\x0f\xb6\x05\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x88\x44\x24\x00\xfe\xc0\x88\x05\x00\x00\x00\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\x4c\x24\x00\xba\x00\x00\x00\x00\x48\x8b\x01\xff\x90\x00\x00\x00\x00\x48\x8b\x54\x24\x00\x48\x8d\x4c\x24\x00\xe8\x00\x00\x00\x00\x48\x8b\x05\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x48\x8b\x18\x48\x8b\x01\xff\x50\x00\x48\x8b\x0d\x00\x00\x00\x00\x41\xb8\x00\x00\x00\x00\x48\x8b\xd0\xff\x93\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\x8d\x00\x00\x00\x00\x48\x33\xcc\xe8\x00\x00\x00\x00\x4c\x8d\x9c\x24", "0?000????0000?000?0000????00000?0000?0????00000????0000?0000?0????000????0000?00000000?000????00????00000????0000?00000?000????0000????0000").Base;
+		if (nv.dwBP31_9_3) {
+			nv.dwBP31_9_3 -= CShell_x64.baseAddr;
+			log(skCrypt("dwBP31_9_3"), nv.dwBP31_9_3);
+		}
+
+		nv.dwBP31_9_4 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x75\x00\x48\x8b\x4c\x24\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\x4c\x24\x00\xba\x00\x00\x00\x00\x48\x8b\x01\xff\x90\x00\x00\x00\x00\x48\x8b\x54\x24\x00\x48\x8d\x4c\x24\x00\xe8\x00\x00\x00\x00\x48\x8b\x05\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x48\x8b\x18\x48\x8b\x01\xff\x50\x00\x48\x8b\x0d\x00\x00\x00\x00\x41\xb8\x00\x00\x00\x00\x48\x8b\xd0\xff\x93\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\x8d\x00\x00\x00\x00\x48\x33\xcc\xe8\x00\x00\x00\x00\x48\x81\xc4\x00\x00\x00\x00\x41\x5c", "0?0000?00000?0000?0????00000????0000?0000?0????000????0000?00000000?000????00????00000????0000?00000?000????0000????000????00").Base;
+		if (nv.dwBP31_9_4) {
+			nv.dwBP31_9_4 -= CShell_x64.baseAddr;
+			log(skCrypt("dwBP31_9_4"), nv.dwBP31_9_4);
+		}
+
+		nv.dwBP31_9_5 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x75\x00\x48\x8b\x4c\x24\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\x4c\x24\x00\xba\x00\x00\x00\x00\x48\x8b\x01\xff\x90\x00\x00\x00\x00\x48\x8b\x54\x24\x00\x48\x8d\x4c\x24\x00\xe8\x00\x00\x00\x00\x48\x8b\x05\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x48\x8b\x18\x48\x8b\x01\xff\x50\x00\x48\x8b\x0d\x00\x00\x00\x00\x41\xb8\x00\x00\x00\x00\x48\x8b\xd0\xff\x93\x00\x00\x00\x00\x48\x8b\x4c\x24\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\x8d\x00\x00\x00\x00\x48\x33\xcc\xe8\x00\x00\x00\x00\x48\x81\xc4\x00\x00\x00\x00\x5f", "0?0000?00000?0000?0????00000????0000?0000?0????000????0000?00000000?000????00????00000????0000?00000?000????0000????000????0").Base;
+		if (nv.dwBP31_9_5) {
+			nv.dwBP31_9_5 -= CShell_x64.baseAddr;
+			log(skCrypt("dwBP31_9_5"), nv.dwBP31_9_5);
+		}
+
+		nv.dwBP31_10_1 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x75\x00\x45\x0f\xb6\xc7\x8b\xd3", "0?000000").Base;
+		if (nv.dwBP31_10_1) {
+			nv.dwBP31_10_1 -= CShell_x64.baseAddr;
+			log(skCrypt("dwBP31_10_1"), nv.dwBP31_10_1);
+		}
+
+		nv.dwBP31_10_2 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x75\x00\x48\x8b\x4d\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\x4d\x00\x48\x8b\x01\xba\x00\x00\x00\x00\xff\x90\x00\x00\x00\x00\x48\x8b\x55", "0?000?00000?000?0000????00????000").Base;
+		if (nv.dwBP31_10_2) {
+			nv.dwBP31_10_2 -= CShell_x64.baseAddr;
+			log(skCrypt("dwBP31_10_2"), nv.dwBP31_10_2);
+		}
+
+		nv.dwBP31_10_3 = FindPattern::FindPattern((DWORD64)CShell_x64.baseAddr, (DWORD64)CShell_x64.sizeDll, (PBYTE)"\x75\x00\x48\x8b\x4c\x24\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\x4c\x24\x00\x48\x8b\x01\xba\x00\x00\x00\x00\xff\x90\x00\x00\x00\x00\x48\x8b\x54\x24\x00\x48\x8d\x8d\x00\x00\x00\x00\xe8\x00\x00\x00\x00\x48\x8b\x05\x00\x00\x00\x00\x48\x8b\x18\x48\x8b\x4c\x24\x00\x48\x8b\x01\xff\x50\x00\x48\x8b\xd0\x45\x8b\xc5", "0?0000?00000?0000?0000????00????0000?000????0????000????0000000?00000?000000").Base;
+		if (nv.dwBP31_10_3) {
+			nv.dwBP31_10_3 -= CShell_x64.baseAddr;
+			log(skCrypt("dwBP31_10_3"), nv.dwBP31_10_3);
+		}
+
 		Beep(300, 500);
 		isgetaddress = true;
 	}
